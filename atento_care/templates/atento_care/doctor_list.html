@@ -1,0 +1,35 @@
+{% extends 'atento_care/base.html' %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="card-title">Select a Doctor</h2>
+    </div>
+    <div class="card-body">
+        {% for doctor in object_list %}
+<div class="card my-2">
+  <div class="card-body">
+    <p>Doctor ID: {{ doctor.pk }}</p>
+    {% if doctor.doctoravailability_set.exists %}
+    <h5 class="card-title">
+      <a href="{% url 'doctor_calendar' doctor.pk %}" 
+          data-events-api-url="{% url 'api_availability_id' doctor.pk %}"
+          data-user-role="{{ request.user.user_type.lower }}">
+          {{ doctor.user.username }}
+      </a>
+    </h5>
+    {% else %}
+    <h5 class="card-title">{{ doctor.user.username }} (no calendar available)</h5>
+    {% endif %}
+    <p class="card-text"><strong>Specialty:</strong> {{ doctor.specialty }}</p>
+    <p class="card-text"><strong>Years of Experience:</strong> {{ doctor.years_of_experience }}</p>
+  </div>
+</div>
+{% empty %}
+<p>No doctors available.</p>
+{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

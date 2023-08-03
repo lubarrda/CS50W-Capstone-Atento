@@ -1,0 +1,37 @@
+{% extends 'atento_care/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Create New Appointment</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="appointment_date">Appointment Date:</label>
+                            <input type="text" id="appointment_date" name="appointment_date" class="form-control" value="{{ start_time.date }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointment_time">Appointment Time:</label>
+                            <input type="time" id="appointment_time" name="appointment_time" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient_notes">Patient's Notes:</label>
+                            <textarea class="form-control" id="patient_notes" name="patient_notes"></textarea>
+                        </div>
+                        <input type="hidden" name="start_time" value="{{ start_time }}">
+                        <input type="hidden" name="end_time" value="{{ end_time }}">
+                        <input type="hidden" name="end_time" value="{{ end_time }}">
+                        <input  name="doctor_id" value="{{ doctor_id }}">
+                        <button type="submit" class="btn btn-primary mt-3">Request Appointment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

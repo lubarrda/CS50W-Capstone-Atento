@@ -1,0 +1,84 @@
+{% extends 'atento_care/base.html' %}
+
+{% block content %}
+  <div class="container py-5">
+    {% if user.is_authenticated %}
+      <h2 class="mb-3">Welcome back, {% if user.user_type == 'DOCTOR' %}Dr.{{ else }}{% endif %} {{ request.user.username }}!</h2>
+      <div class="row">
+        {% if user.user_type == 'DOCTOR' %}
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Set Your Availability</h5>
+                <p class="card-text">Let patients know when you're available for appointments.</p>
+                <a href="{% url 'add_availability' %}" class="btn btn-primary">Set Availability</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">View Your Availability</h5>
+                <p class="card-text">Check your current availability schedule.</p>
+                <a href="{% url 'view_availability' %}" class="btn btn-primary">View Availability</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Your Appointments</h5>
+                <p class="card-text">Review your upcoming appointments.</p>
+                <a href="#" class="btn btn-primary">View Appointments</a>
+              </div>
+            </div>
+          </div>
+          <!-- Agrega más tarjetas o elementos aquí para los médicos si es necesario -->
+        {% else %}
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Book an Appointment</h5>
+                <p class="card-text">Find an available doctor and book an appointment.</p>
+                <a href="{% url 'doctor_list' %}" class="btn btn-primary">Book Appointment</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Your Appointments</h5>
+                <p class="card-text">Review your upcoming appointments.</p>
+                <a href="#" class="btn btn-primary">View Appointments</a>
+              </div>
+            </div>
+          </div>
+          <!-- Agrega más tarjetas o elementos aquí para los pacientes si es necesario -->
+        {% endif %}
+      </div>
+    {% else %}
+      <!-- Si el usuario no está autenticado, mostramos opciones para iniciar sesión o registrarse -->
+      <h2 class="mb-3">Welcome to Atento Care!</h2>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Login</h5>
+              <p class="card-text">Already have an account? Login to access your appointments.</p>
+              <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Register</h5>
+              <p class="card-text">Don't have an account? Register to start booking appointments.</p>
+              <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,34 @@
+
+{% extends 'atento_care/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="card-title">Doctor's Calendar</h2>
+    </div>
+    <div class="card-body">
+      <div id="calendar"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<!-- Load your JavaScript file -->
+<script src="{% static 'js/doctor_calendar.js' %}"></script>
+
+<script>
+// Aquí es donde inicializamos el calendario
+document.addEventListener('DOMContentLoaded', function() {
+  initializeCalendar(
+    "{% url 'api_availability_id' doctor.pk %}", 
+    "{{ request.user.user_type.lower }}"
+  );
+});
+</script>
+
+{% endblock %}

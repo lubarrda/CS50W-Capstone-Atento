@@ -245,9 +245,22 @@ def calendar_view(request, doctor_id):
     })
 
 def create_appointment(request):
+    start_str = request.GET.get('start', None)
+    end_str = request.GET.get('end', None)
+
+
+    if start_str:
+        start_str = start_str.rsplit(" ", 1)[0]
+    if end_str:
+        end_str = end_str.rsplit(" ", 1)[0]
+
+
+    start_time = datetime.fromisoformat(start_str) if start_str else None
+    end_time = datetime.fromisoformat(end_str) if end_str else None
+
     context = {
-        'start_time': request.GET.get('start', None),
-        'end_time': request.GET.get('end', None),
+        'start_time': start_time,
+        'end_time': end_time,
         'doctor_id': request.GET.get('doctor_id', None),
     }
     

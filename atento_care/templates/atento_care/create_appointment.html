@@ -23,8 +23,8 @@
                             <label for="patient_notes">Patient's Notes:</label>
                             <textarea class="form-control" id="patient_notes" name="patient_notes"></textarea>
                         </div>
+                        <div id="calendar" data-doctor-id="{{ doctor.id }}"></div>
                         <input type="hidden" name="start_time" value="{{ start_time }}">
-                        <input type="hidden" name="end_time" value="{{ end_time }}">
                         <input type="hidden" name="end_time" value="{{ end_time }}">
                         <input type="hidden" name="doctor_id" value="{{ doctor_id }}">
                         <button type="submit" class="btn btn-primary mt-3">Request Appointment</button>

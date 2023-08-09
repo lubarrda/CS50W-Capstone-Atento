@@ -7,10 +7,12 @@
 <div class="container my-4">
   <div class="card mb-4">
     <div class="card-header">
-      <h2 class="card-title">Doctor's Calendar</h2>
+      <h2 class="card-title">{{ doctor.user.username }}'s Calendar</h2>
+      <p>Doctor ID: {{ doctor.pk }}</p>
+      <p> Please select an available date to book your appointment </p>
     </div>
     <div class="card-body">
-      <div id="calendar"></div>
+      <div id="calendar" data-doctor-id="{{ doctor.pk }}"></div>
     </div>
   </div>
 </div>

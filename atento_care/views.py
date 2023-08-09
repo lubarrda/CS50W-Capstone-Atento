@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
 from datetime import datetime, timedelta
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 
 
 
@@ -248,12 +248,10 @@ def create_appointment(request):
     start_str = request.GET.get('start', None)
     end_str = request.GET.get('end', None)
 
-
     if start_str:
         start_str = start_str.rsplit(" ", 1)[0]
     if end_str:
         end_str = end_str.rsplit(" ", 1)[0]
-
 
     start_time = datetime.fromisoformat(start_str) if start_str else None
     end_time = datetime.fromisoformat(end_str) if end_str else None
@@ -265,16 +263,37 @@ def create_appointment(request):
     }
     
     if request.method == "POST":
-        doctor = Doctor.objects.get(id=request.POST.get('doctor_id'))
+        doctor_id = request.POST.get('doctor_id')
+        
+        if not doctor_id or doctor_id == 'null':
+            return HttpResponseBadRequest("Invalid doctor ID")
+
+        try:
+            doctor = Doctor.objects.get(user__id=doctor_id)
+        except Doctor.DoesNotExist:
+            return HttpResponseBadRequest("Doctor with the given ID does not exist")
+        
+        start_time_str = request.POST.get('start_time')
+        end_time_str = request.POST.get('end_time')
+        
+        start_time_post = datetime.strptime(start_time_str, '%b. %d, %Y, %I:%M %p')
+        end_time_post = datetime.strptime(end_time_str, '%b. %d, %Y, %I:%M %p.')
+
         patient = Patient.objects.get(user=request.user)
-        start_time = request.POST.get('start_time')
-        end_time = request.POST.get('end_time')
-        date = request.POST.get('date')
+        date = datetime.strptime(request.POST.get('appointment_date'), '%Y-%m-%d').date()
         patient_notes = request.POST.get('patient_notes', '')
 
-        new_appointment = ScheduledAppointment(doctor=doctor, patient=patient, start_time=start_time, end_time=end_time, date=date, status='REQUESTED', patient_notes=patient_notes)
+        new_appointment = ScheduledAppointment(
+            doctor=doctor, 
+            patient=patient, 
+            start_time=start_time_post, 
+            end_time=end_time_post, 
+            date=date, 
+            status='REQUESTED', 
+            patient_notes=patient_notes
+        )
         new_appointment.save()
 
-        return redirect('home')  # redirige a donde quieras después de crear la cita
+        return redirect('doctor_calendar')
 
     return render(request, 'atento_care/create_appointment.html', context)

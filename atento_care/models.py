@@ -23,16 +23,6 @@ class Patient(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     birth_year = models.IntegerField()
 
-# AppointmentStatus. This model stores the status of each appointment.
-class AppointmentStatus(models.Model):
-    STATUS_CHOICES = [
-        ('REQUESTED', 'Requested'),
-        ('ACCEPTED', 'Accepted'),
-        ('REJECTED', 'Rejected'),
-        ('CANCELLED', 'Cancelled'),
-        ('COMPLETED', 'Completed'),
-    ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='REQUESTED')  # status of the appointment
 
 
 # DoctorAvailability. This model stores the availability of a doctor.

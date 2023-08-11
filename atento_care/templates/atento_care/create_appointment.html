@@ -9,6 +9,7 @@
                     <h2 class="mb-0">Create New Appointment</h2>
                 </div>
                 <div class="card-body">
+                    <p>Please fill in the details for your appointment request. The doctor will confirm or reject your request soon.</p>
                     <form method="post">
                         {% csrf_token %}
                         <div class="form-group">
@@ -17,11 +18,11 @@
                         </div>
                         <div class="form-group">
                             <label for="appointment_time">Appointment Time:</label>
-                            <input type="time" id="appointment_time" name="appointment_time" class="form-control">
+                            <input type="time" id="appointment_time" name="appointment_time" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="patient_notes">Patient's Notes:</label>
-                            <textarea class="form-control" id="patient_notes" name="patient_notes"></textarea>
+                            <textarea class="form-control" id="patient_notes" name="patient_notes" required></textarea>
                         </div>
                         <div id="calendar" data-doctor-id="{{ doctor.id }}"></div>
                         <input type="hidden" name="start_time" value="{{ start_time }}">

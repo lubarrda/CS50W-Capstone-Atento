@@ -245,9 +245,11 @@ def calendar_view(request, doctor_id):
     })
 
 def create_appointment(request):
+    # Obtain start and end times from the GET parameters
     start_str = request.GET.get('start', None)
     end_str = request.GET.get('end', None)
-
+    
+    # Convert the start and end time strings to datetime objects
     if start_str:
         start_str = start_str.rsplit(" ", 1)[0]
     if end_str:
@@ -273,22 +275,32 @@ def create_appointment(request):
         except Doctor.DoesNotExist:
             return HttpResponseBadRequest("Doctor with the given ID does not exist")
         
+        date_str = request.POST.get('appointment_date')
         start_time_str = request.POST.get('start_time')
         end_time_str = request.POST.get('end_time')
         
-        start_time_post = datetime.strptime(start_time_str, '%b. %d, %Y, %I:%M %p')
-        end_time_post = datetime.strptime(end_time_str, '%b. %d, %Y, %I:%M %p.')
+        # Helper function to convert datetime string to datetime object
+        def get_datetime(datetime_str):
+            date_str, time_str = datetime_str.split(', ', 2)[0:2]
+            date_format = '%b. %d, %Y'
+            time_format = '%I:%M %p'
+            date_part = datetime.strptime(date_str, date_format).date()
+            time_part = datetime.strptime(time_str, time_format).time()
+            return datetime.combine(date_part, time_part)
 
+        # Convert the time strings to datetime objects
+        start_datetime = get_datetime(start_time_str)
+        end_datetime = get_datetime(end_time_str)
+        
         patient = Patient.objects.get(user=request.user)
-        date = datetime.strptime(request.POST.get('appointment_date'), '%Y-%m-%d').date()
         patient_notes = request.POST.get('patient_notes', '')
 
         new_appointment = ScheduledAppointment(
             doctor=doctor, 
             patient=patient, 
-            start_time=start_time_post, 
-            end_time=end_time_post, 
-            date=date, 
+            start_time=start_datetime, 
+            end_time=end_datetime, 
+            date=start_datetime.date(), 
             status='REQUESTED', 
             patient_notes=patient_notes
         )

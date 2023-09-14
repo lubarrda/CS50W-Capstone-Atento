@@ -1,4 +1,3 @@
-
 {% extends 'atento_care/base.html' %}
 
 {% load static %}
@@ -9,7 +8,7 @@
     <div class="card-header">
       <h2 class="card-title">{{ doctor.user.username }}'s Calendar</h2>
       <p>Doctor ID: {{ doctor.pk }}</p>
-      <p> Please select an available date to book your appointment </p>
+      <p>Please select an available date to book your appointment</p>
     </div>
     <div class="card-body">
       <div id="calendar" data-doctor-id="{{ doctor.pk }}"></div>
@@ -24,7 +23,7 @@
 <script src="{% static 'js/doctor_calendar.js' %}"></script>
 
 <script>
-// Aquí es donde inicializamos el calendario
+// Starting calendar
 document.addEventListener('DOMContentLoaded', function() {
   initializeCalendar(
     "{% url 'api_availability_id' doctor.pk %}", 
@@ -32,5 +31,35 @@ document.addEventListener('DOMContentLoaded', function() {
   );
 });
 </script>
+
+<!-- Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="appointmentModalLabel">Schedule Appointment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="appointmentForm">
+          <div class="form-group">
+            <label for="selectedTimeRange">Selected Time Range:</label>
+            <input type="text" class="form-control" id="selectedTimeRange" readonly value="2:00pm - 2:30pm">
+          </div>
+          <div class="form-group">
+            <label for="patientNotes">Notes:</label>
+            <textarea class="form-control" id="patientNotes" rows="3" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmAppointment">Confirm Appointment</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

@@ -44,7 +44,7 @@ class DoctorAvailability(models.Model):
     end_time = models.TimeField()  # The ending time of the slot
 
     class Meta:
-        unique_together = ('doctor', 'day_of_week',)
+        unique_together = ('doctor', 'day_of_week', 'start_time', 'end_time')
 
 
 class ScheduledAppointment(models.Model):
@@ -61,6 +61,6 @@ class ScheduledAppointment(models.Model):
     end_time = models.DateTimeField()
     date = models.DateField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='REQUESTED')
-    doctor_notes = models.TextField(null=True, blank=True)  # Campo nuevo de Appointment
-    patient_notes = models.TextField(null=True, blank=True)  # Campo nuevo de Appointment
+    doctor_notes = models.TextField(null=True, blank=True) 
+    patient_notes = models.TextField(null=True, blank=True)
 

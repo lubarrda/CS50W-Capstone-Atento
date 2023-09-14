@@ -3,7 +3,7 @@ from django.urls import path
 from .views import (register_request, login_request, doctor_form, patient_form, 
                     home_view, logout_request, my_account, update_doctor_profile, 
                     update_patient_profile, view_doctor_profile, 
-                    view_patient_profile, create_appointment,
+                    view_patient_profile, api_create_appointment,
                     add_availability, view_availability, DoctorListView, DoctorCalendarView )
 
 from .api import api_availability
@@ -26,11 +26,7 @@ urlpatterns = [
     path('api/availability/<int:doctor_id>/', api_availability, name='api_availability_id'),
     path('doctors/', DoctorListView.as_view(), name='doctor_list'),
     path('doctor/<int:pk>/calendar/', DoctorCalendarView.as_view(), name='doctor_calendar'),
-    path('create_appointment/', create_appointment, name='create_appointment'),
+    path('api/create_appointment/', api_create_appointment, name='api_create_appointment'),
+
     
-
-
-
-
-
 ]

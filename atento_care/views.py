@@ -12,6 +12,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import JsonResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
+import json
+
 
 
 
@@ -24,7 +27,6 @@ def register_request(request):
             login(request, user)
             print(type(user))
             messages.success(request, "Registration successful. Welcome to Atento.")
-            # Aquí se ha añadido una verificación del tipo de usuario para redirigirlo al formulario correspondiente.
             if user.user_type == 'DOCTOR':
                 return redirect('doctor_form')
             else:
@@ -110,9 +112,11 @@ def home_view(request):
 def my_account(request, doctor_id=None, patient_id=None):
     if request.user.is_authenticated:  
         if request.user.user_type == 'DOCTOR':
-            return render(request, 'atento_care/doctor_profile.html', {'doctor_id': doctor_id})
+            doctor = get_object_or_404(Doctor, user=request.user)
+            return render(request, 'atento_care/doctor_profile.html', {'doctor': doctor})
         elif request.user.user_type == "PATIENT":
-            return render(request, 'atento_care/patient_profile.html', {'patient_id': patient_id})
+            patient = get_object_or_404(Patient, user=request.user)
+        return render(request, 'atento_care/patient_profile.html', {'patient': patient})
     else:
         return redirect('home')
 
@@ -207,6 +211,7 @@ def appointment_create_view(request, pk, start, end):
 
 #########################
 
+@login_required
 def calendar_view(request, doctor_id):
     doctor = Doctor.objects.get(pk=doctor_id)
     availabilities = DoctorAvailability.objects.filter(doctor=doctor)
@@ -244,68 +249,116 @@ def calendar_view(request, doctor_id):
 
     })
 
-def create_appointment(request):
-    # Obtain start and end times from the GET parameters
-    start_str = request.GET.get('start', None)
-    end_str = request.GET.get('end', None)
-    
-    # Convert the start and end time strings to datetime objects
-    if start_str:
-        start_str = start_str.rsplit(" ", 1)[0]
-    if end_str:
-        end_str = end_str.rsplit(" ", 1)[0]
 
-    start_time = datetime.fromisoformat(start_str) if start_str else None
-    end_time = datetime.fromisoformat(end_str) if end_str else None
-
-    context = {
-        'start_time': start_time,
-        'end_time': end_time,
-        'doctor_id': request.GET.get('doctor_id', None),
-    }
-    
+@csrf_exempt
+def api_create_appointment(request):
     if request.method == "POST":
-        doctor_id = request.POST.get('doctor_id')
-        
-        if not doctor_id or doctor_id == 'null':
-            return HttpResponseBadRequest("Invalid doctor ID")
-
         try:
+            data = json.loads(request.body)
+            
+            # Parse start and end time
+            start_time = datetime.fromisoformat(data.get('start'))
+            end_time = datetime.fromisoformat(data.get('end'))
+            
+            # Get doctor ID and patient notes
+            doctor_id = data.get('doctor_id')
+            patient_notes = data.get('notes')
+            
+            # Validate doctor ID
+            if not doctor_id or doctor_id == 'null':
+                return HttpResponseBadRequest("Invalid doctor ID")
+            
+            # Get doctor and patient objects
             doctor = Doctor.objects.get(user__id=doctor_id)
-        except Doctor.DoesNotExist:
-            return HttpResponseBadRequest("Doctor with the given ID does not exist")
+            patient = Patient.objects.get(user=request.user)
+            
+            # Create a new appointment
+            new_appointment = ScheduledAppointment(
+                doctor=doctor, 
+                patient=patient, 
+                start_time=start_time, 
+                end_time=end_time, 
+                date=start_time.date(), 
+                status='REQUESTED', 
+                patient_notes=patient_notes
+            )
+            new_appointment.save()
+            
+            return JsonResponse({'status': 'success'})
+
+        except ValueError as e:
+            # Handle specific error for datetime parsing
+            return JsonResponse({'status': 'fail', 'error': f"Invalid data format: {str(e)}"}, status=400)
         
-        date_str = request.POST.get('appointment_date')
-        start_time_str = request.POST.get('start_time')
-        end_time_str = request.POST.get('end_time')
+        except Exception as e:
+            # Handle other exceptions
+            return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
+    
+    else:
+        return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
+
+#def create_appointment(request):
+#     # Obtain start and end times from the GET parameters
+#     start_str = request.GET.get('start', None)
+#     end_str = request.GET.get('end', None)
+    
+#     # Convert the start and end time strings to datetime objects
+#     if start_str:
+#         start_str = start_str.rsplit(" ", 1)[0]
+#     if end_str:
+#         end_str = end_str.rsplit(" ", 1)[0]
+
+#     start_time = datetime.fromisoformat(start_str) if start_str else None
+#     end_time = datetime.fromisoformat(end_str) if end_str else None
+
+#     context = {
+#         'start_time': start_time,
+#         'end_time': end_time,
+#         'doctor_id': request.GET.get('doctor_id', None),
+#     }
+    
+#     if request.method == "POST":
+#         doctor_id = request.POST.get('doctor_id')
         
-        # Helper function to convert datetime string to datetime object
-        def get_datetime(datetime_str):
-            date_str, time_str = datetime_str.split(', ', 2)[0:2]
-            date_format = '%b. %d, %Y'
-            time_format = '%I:%M %p'
-            date_part = datetime.strptime(date_str, date_format).date()
-            time_part = datetime.strptime(time_str, time_format).time()
-            return datetime.combine(date_part, time_part)
+#         if not doctor_id or doctor_id == 'null':
+#             return HttpResponseBadRequest("Invalid doctor ID")
 
-        # Convert the time strings to datetime objects
-        start_datetime = get_datetime(start_time_str)
-        end_datetime = get_datetime(end_time_str)
+#         try:
+#             doctor = Doctor.objects.get(user__id=doctor_id)
+#         except Doctor.DoesNotExist:
+#             return HttpResponseBadRequest("Doctor with the given ID does not exist")
         
-        patient = Patient.objects.get(user=request.user)
-        patient_notes = request.POST.get('patient_notes', '')
+#         date_str = request.POST.get('appointment_date')
+#         start_time_str = request.POST.get('start_time')
+#         end_time_str = request.POST.get('end_time')
+        
+#         # Helper function to convert datetime string to datetime object
+#         def get_datetime(datetime_str):
+#             date_str, time_str = datetime_str.split(', ', 2)[0:2]
+#             date_format = '%b. %d, %Y'
+#             time_format = '%I:%M %p'
+#             date_part = datetime.strptime(date_str, date_format).date()
+#             time_part = datetime.strptime(time_str, time_format).time()
+#             return datetime.combine(date_part, time_part)
 
-        new_appointment = ScheduledAppointment(
-            doctor=doctor, 
-            patient=patient, 
-            start_time=start_datetime, 
-            end_time=end_datetime, 
-            date=start_datetime.date(), 
-            status='REQUESTED', 
-            patient_notes=patient_notes
-        )
-        new_appointment.save()
+#         # Convert the time strings to datetime objects
+#         start_datetime = get_datetime(start_time_str)
+#         end_datetime = get_datetime(end_time_str)
+        
+#         patient = Patient.objects.get(user=request.user)
+#         patient_notes = request.POST.get('patient_notes', '')
 
-        return redirect('doctor_calendar')
+#         new_appointment = ScheduledAppointment(
+#             doctor=doctor, 
+#             patient=patient, 
+#             start_time=start_datetime, 
+#             end_time=end_datetime, 
+#             date=start_datetime.date(), 
+#             status='REQUESTED', 
+#             patient_notes=patient_notes
+#         )
+#         new_appointment.save()
 
-    return render(request, 'atento_care/create_appointment.html', context)
+#         return redirect('doctor_calendar')
+
+#     return render(request, 'atento_care/create_appointment.html', context)

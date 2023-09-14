@@ -17,8 +17,10 @@ def api_availability(request, doctor_id=None):
             for i in range(30):  # Loop through a month
                 day = timezone.now() + timedelta(days=i)
                 if day.weekday() == a.day_of_week - 1:  # Python's weekday() function starts with 0=Monday
-                    start_datetime = timezone.make_aware(datetime.combine(day, a.start_time))
-                    end_datetime = timezone.make_aware(datetime.combine(day, a.end_time))
+                    start_datetime = timezone.make_aware(
+                        datetime.combine(day.date(), a.start_time))  # Corregido aquí
+                    end_datetime = timezone.make_aware(
+                        datetime.combine(day.date(), a.end_time))  # Corregido aquí
 
                     events.append({
                         'title': 'Available',
@@ -37,8 +39,9 @@ def api_availability(request, doctor_id=None):
                 color = 'grey'
 
             # Combina la fecha y la hora en un solo objeto datetime
-            start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time))
-            end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time))
+            start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time.time()))
+            end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time.time()))
+
 
             events.append({
                 'title': 'Appointment',
@@ -48,3 +51,4 @@ def api_availability(request, doctor_id=None):
             })
 
         return JsonResponse(events, safe=False)
+

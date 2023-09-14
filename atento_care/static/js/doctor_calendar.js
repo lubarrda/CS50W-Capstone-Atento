@@ -10,18 +10,69 @@ function initializeCalendar(apiUrl, userRole) {
 
     const doctorId = calendarEl.getAttribute("data-doctor-id");
 
-    function redirectToCreateAppointment(start, end) {
-        window.location.href = `/create_appointment/?doctor_id=${doctorId}&start=${start}&end=${end}`;
+    function showAppointmentModal(startStr, endStr) {
+        $('#selectedTimeRange').val(`${startStr} - ${endStr}`);
+        $('#appointmentModal').modal('show');
     }
+
+    function sendAppointmentRequest() {
+        const selectedTimeRange = $('#selectedTimeRange').val();
+        const notes = $('#patientNotes').val();
+    
+        if (!notes) {
+            alert("Please provide notes");
+            return;
+        }
+    
+        const [startStr, endStr] = selectedTimeRange.split(' - ');
+    
+        const data = {
+            doctor_id: doctorId,
+            start: startStr,
+            end: endStr,
+            notes: notes
+        };
+    
+        // Obtén el token CSRF del meta tag
+        const csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+        fetch('http://127.0.0.1:8000/api/create_appointment/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrf_token  // Usar el csrf_token que acabas de obtener
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { 
+                    throw new Error(`Error ${response.status}: ${err.error}`); 
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Appointment scheduled successfully');
+            $('#appointmentModal').modal('hide');
+        })
+        .catch(error => {
+            alert('Error scheduling appointment: ' + error.message);
+            console.error('Error:', error);
+        });
+    }
+    
+    
 
     function handleEventClick(info) {
         console.log("Event clicked:", info);
         
-        // Change the event's background color upon clicking
         info.el.style.backgroundColor = info.event.extendedProps.color;
 
         if (userRole === 'patient' && info.event.title === "Available") {
-            redirectToCreateAppointment(info.event.startStr, info.event.endStr);
+            const startStr = info.event.start.toISOString();
+            const endStr = info.event.end.toISOString();
+            showAppointmentModal(startStr, endStr);
         }
     }
 
@@ -44,7 +95,9 @@ function initializeCalendar(apiUrl, userRole) {
         );
 
         if (userRole === 'patient' && selectedRangeIsAvailable) {
-            redirectToCreateAppointment(info.startStr, info.endStr);
+            const startStr = info.start.toISOString(); 
+            const endStr = info.end.toISOString(); 
+            showAppointmentModal(startStr, endStr);
         } else {
             console.log("Interval not available");
         }
@@ -70,5 +123,6 @@ function initializeCalendar(apiUrl, userRole) {
     } catch (error) {
         console.error("Error occurred while initializing calendar:", error);
     }    
-}
 
+    $('#confirmAppointment').click(sendAppointmentRequest);
+}

@@ -18,6 +18,10 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
+
 
 <!-- Load your JavaScript file -->
 <script src="{% static 'js/doctor_calendar.js' %}"></script>
@@ -45,13 +49,18 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="modal-body">
         <form id="appointmentForm">
           <div class="form-group">
-            <label for="selectedTimeRange">Selected Time Range:</label>
-            <input type="text" class="form-control" id="selectedTimeRange" readonly value="2:00pm - 2:30pm">
-          </div>
-          <div class="form-group">
-            <label for="patientNotes">Notes:</label>
-            <textarea class="form-control" id="patientNotes" rows="3" required></textarea>
-          </div>
+            <label for="appointmentDate">Appointment Date:</label>
+            <input type="text" class="form-control" id="appointmentDate" readonly>
+        </div>
+        <div class="form-group">
+            <label for="startTime">Appointment time:</label>
+            <select class="form-control" id="startTime" disabled>
+            </select>
+        </div>
+        <div class="form-group">
+          <label for="patientNotes">Notes:</label>
+          <textarea class="form-control" id="patientNotes" rows="3" required></textarea>
+        </div>
         </form>
       </div>
       <div class="modal-footer">

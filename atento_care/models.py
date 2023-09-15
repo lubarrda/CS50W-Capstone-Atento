@@ -42,6 +42,7 @@ class DoctorAvailability(models.Model):
     day_of_week = models.IntegerField(choices=DAYS_OF_WEEK)  # 1 for Monday, 7 for Sunday
     start_time = models.TimeField()  # The starting time of the slot
     end_time = models.TimeField()  # The ending time of the slot
+    is_booked = models.BooleanField(default=False)  
 
     class Meta:
         unique_together = ('doctor', 'day_of_week', 'start_time', 'end_time')

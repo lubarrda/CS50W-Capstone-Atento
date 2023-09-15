@@ -1,9 +1,15 @@
 from django.http import JsonResponse
-from .models import DoctorAvailability, ScheduledAppointment, Doctor
+from .models import DoctorAvailability, ScheduledAppointment, Doctor, Patient
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.utils.timezone import utc
+from django.db import transaction
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponseBadRequest
+import json
+
 
 @login_required
 def api_availability(request, doctor_id=None):
@@ -18,9 +24,9 @@ def api_availability(request, doctor_id=None):
                 day = timezone.now() + timedelta(days=i)
                 if day.weekday() == a.day_of_week - 1:  # Python's weekday() function starts with 0=Monday
                     start_datetime = timezone.make_aware(
-                        datetime.combine(day.date(), a.start_time))  # Corregido aquí
+                        datetime.combine(day.date(), a.start_time)) 
                     end_datetime = timezone.make_aware(
-                        datetime.combine(day.date(), a.end_time))  # Corregido aquí
+                        datetime.combine(day.date(), a.end_time))  
 
                     events.append({
                         'title': 'Available',
@@ -42,9 +48,8 @@ def api_availability(request, doctor_id=None):
             start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time.time()))
             end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time.time()))
 
-
             events.append({
-                'title': 'Appointment',
+                'sa.status': 'REQUESTED',
                 'start': start_datetime.isoformat(),
                 'end': end_datetime.isoformat(),
                 'color': color
@@ -52,3 +57,68 @@ def api_availability(request, doctor_id=None):
 
         return JsonResponse(events, safe=False)
 
+
+@csrf_exempt
+def api_create_appointment(request):
+    print("Request method:", request.method)
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            
+            # Parse start and end time and convert them from UTC to local time
+            start_time = datetime.fromisoformat(data.get('start').replace("Z", "+00:00")).astimezone(timezone.get_current_timezone())
+            end_time = datetime.fromisoformat(data.get('end').replace("Z", "+00:00")).astimezone(timezone.get_current_timezone())
+
+            # Get doctor ID and patient notes
+            doctor_id = data.get('doctor_id')
+            patient_notes = data.get('notes')
+            
+            # Validate doctor ID
+            if not doctor_id or doctor_id == 'null':
+                return HttpResponseBadRequest("Invalid doctor ID")
+            
+            # Get doctor and patient objects
+            doctor = Doctor.objects.get(user__id=doctor_id)
+            patient = Patient.objects.get(user=request.user)
+            
+            with transaction.atomic():
+                # Check and update the corresponding availability
+                availability = DoctorAvailability.objects.select_for_update().get(
+                    doctor=doctor,
+                    day_of_week=start_time.weekday() + 1,  # Python's weekday starts from 0 (Monday)
+                    start_time__lte=start_time.time(),
+                    end_time__gte=end_time.time(),
+                    is_booked=False
+                )
+
+                availability.is_booked = True
+                availability.save()
+                
+                # Create a new appointment
+                new_appointment = ScheduledAppointment(
+                    doctor=doctor, 
+                    patient=patient, 
+                    start_time=start_time, 
+                    end_time=end_time, 
+                    date=start_time.date(), 
+                    status='REQUESTED', 
+                    patient_notes=patient_notes
+                )
+                new_appointment.save()
+
+            return JsonResponse({'status': 'success'})
+
+        except DoctorAvailability.DoesNotExist:
+            # Handle specific error when the slot is not available
+            return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
+
+        except ValueError as e:
+            # Handle specific error for datetime parsing
+            return JsonResponse({'status': 'fail', 'error': f"Invalid data format: {str(e)}"}, status=400)
+        
+        except Exception as e:
+            # Handle other exceptions
+            return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
+    
+    else:
+        return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)

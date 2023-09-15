@@ -3,10 +3,10 @@ from django.urls import path
 from .views import (register_request, login_request, doctor_form, patient_form, 
                     home_view, logout_request, my_account, update_doctor_profile, 
                     update_patient_profile, view_doctor_profile, 
-                    view_patient_profile, api_create_appointment,
+                    view_patient_profile,
                     add_availability, view_availability, DoctorListView, DoctorCalendarView )
 
-from .api import api_availability
+from .api import api_availability, api_create_appointment
 
 urlpatterns = [
     path('', home_view, name='home'),

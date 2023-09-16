@@ -23,16 +23,21 @@ def api_availability(request, doctor_id=None):
             for i in range(30):  # Loop through a month
                 day = timezone.now() + timedelta(days=i)
                 if day.weekday() == a.day_of_week - 1:  # Python's weekday() function starts with 0=Monday
-                    start_datetime = timezone.make_aware(
-                        datetime.combine(day.date(), a.start_time)) 
-                    end_datetime = timezone.make_aware(
-                        datetime.combine(day.date(), a.end_time))  
+                    start_datetime = timezone.make_aware(datetime.combine(day.date(), a.start_time)) 
+                    end_datetime = timezone.make_aware(datetime.combine(day.date(), a.end_time))
+
+
+                    is_booked = scheduled_appointments.filter(
+                        start_time__gte=start_datetime, 
+                        end_time__lte=end_datetime
+                    ).exists()
 
                     events.append({
-                        'title': 'Available',
+                        'title': 'Booked' if is_booked else 'Available',
                         'start': start_datetime.isoformat(),
                         'end': end_datetime.isoformat(),
-                        'color': 'green'
+                        'color': 'red' if is_booked else 'green',
+                        'is_booked': is_booked  # este campo ahora sólo sirve para indicar el estado en el frontend
                     })
 
         for sa in scheduled_appointments:
@@ -49,7 +54,7 @@ def api_availability(request, doctor_id=None):
             end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time.time()))
 
             events.append({
-                'sa.status': 'REQUESTED',
+                'title': sa.status,
                 'start': start_datetime.isoformat(),
                 'end': end_datetime.isoformat(),
                 'color': color
@@ -82,17 +87,13 @@ def api_create_appointment(request):
             patient = Patient.objects.get(user=request.user)
             
             with transaction.atomic():
-                # Check and update the corresponding availability
-                availability = DoctorAvailability.objects.select_for_update().get(
+                # Check if the slot is already booked
+                if ScheduledAppointment.objects.filter(
                     doctor=doctor,
-                    day_of_week=start_time.weekday() + 1,  # Python's weekday starts from 0 (Monday)
-                    start_time__lte=start_time.time(),
-                    end_time__gte=end_time.time(),
-                    is_booked=False
-                )
-
-                availability.is_booked = True
-                availability.save()
+                    start_time__lt=end_time,
+                    end_time__gt=start_time,
+                ).exists():
+                    return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
                 
                 # Create a new appointment
                 new_appointment = ScheduledAppointment(
@@ -108,10 +109,6 @@ def api_create_appointment(request):
 
             return JsonResponse({'status': 'success'})
 
-        except DoctorAvailability.DoesNotExist:
-            # Handle specific error when the slot is not available
-            return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
-
         except ValueError as e:
             # Handle specific error for datetime parsing
             return JsonResponse({'status': 'fail', 'error': f"Invalid data format: {str(e)}"}, status=400)
@@ -122,3 +119,4 @@ def api_create_appointment(request):
     
     else:
         return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
+

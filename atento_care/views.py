@@ -154,16 +154,21 @@ def add_availability(request):
 @login_required
 def view_availability(request):
     availability = DoctorAvailability.objects.filter(doctor=request.user.doctor)
+    
+    appointments = ScheduledAppointment.objects.filter(doctor=request.user.doctor)
+    
+    events = []
+    for slot in availability:
+        is_booked = appointments.filter(
+            start_time__gte=timezone.make_aware(datetime.combine(timezone.localtime().date(), slot.start_time)),
+            end_time__lte=timezone.make_aware(datetime.combine(timezone.localtime().date(), slot.end_time))
+        ).exists()
 
-    events = [
-        {
-            'title': 'Available' if not slot.is_booked else 'Booked',
+        events.append({
+            'title': 'Available',
             'start': slot.start_time,
             'end': slot.end_time,
-            'isBooked': slot.is_booked
-        }
-        for slot in availability
-    ]
+        })
 
     forms = []
     for slot in availability:
@@ -243,16 +248,15 @@ def calendar_view(request, doctor_id):
         for i in range(30):  # Loop through a month
             day = timezone.now() + timedelta(days=i)
             if day.weekday() == availability.day_of_week - 1:  # Python's weekday() function starts with 0=Monday
-                start_datetime = timezone.make_aware(datetime.combine(day.date(), availability.start_time, tzinfo=utc))
-                end_datetime = timezone.make_aware(datetime.combine(day.date(), availability.end_time, tzinfo=utc))
-                print("Start time:", start_datetime.time())
-                print("End time:", end_datetime.time())
-                print("Weekday:", start_datetime.weekday() + 1)
+                start_datetime = timezone.make_aware(datetime.combine(day.date(), availability.start_time))
+                end_datetime = timezone.make_aware(datetime.combine(day.date(), availability.end_time))
+                
 
                 events.append({
-                    'type': 'availability',
-                    'start_time': start_datetime,
-                    'end_time': end_datetime,
+                    'title': 'Available',
+                    'start': start_datetime.isoformat(),
+                    'end': end_datetime.isoformat(),
+                    'color': 'green',
                 })
 
     for appointment in appointments:

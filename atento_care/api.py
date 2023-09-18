@@ -26,7 +26,6 @@ def api_availability(request, doctor_id=None):
                     start_datetime = timezone.make_aware(datetime.combine(day.date(), a.start_time)) 
                     end_datetime = timezone.make_aware(datetime.combine(day.date(), a.end_time))
 
-
                     is_booked = scheduled_appointments.filter(
                         start_time__gte=start_datetime, 
                         end_time__lte=end_datetime
@@ -42,19 +41,21 @@ def api_availability(request, doctor_id=None):
 
         for sa in scheduled_appointments:
             color = ''
+            title = ''
             if sa.status == 'REQUESTED':
-                color = 'amber'
+                color = '#FFBF00'
+                title = 'REQUESTED'
             elif sa.status == 'ACCEPTED':
                 color = 'pink'
-            else:
-                color = 'grey'
+                title = 'ACCEPTED'
+
 
             # Combina la fecha y la hora en un solo objeto datetime
             start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time.time()))
             end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time.time()))
 
             events.append({
-                'title': sa.status,
+                'title': title,
                 'start': start_datetime.isoformat(),
                 'end': end_datetime.isoformat(),
                 'color': color
@@ -104,10 +105,12 @@ def api_create_appointment(request):
                     date=start_time.date(), 
                     status='REQUESTED', 
                     patient_notes=patient_notes
+
                 )
                 new_appointment.save()
 
-            return JsonResponse({'status': 'success'})
+            return JsonResponse({'status': 'success', 'appointment': {'title': 'REQUESTED', 'status': 'REQUESTED', 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
+
 
         except ValueError as e:
             # Handle specific error for datetime parsing
@@ -119,4 +122,3 @@ def api_create_appointment(request):
     
     else:
         return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
-

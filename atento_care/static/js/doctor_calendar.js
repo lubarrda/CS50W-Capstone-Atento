@@ -70,6 +70,9 @@ function initializeCalendar(apiUrl, userRole) {
         $('#appointmentModal').modal('show');
     }
     
+    function reloadEvents() {
+        calendar.refetchEvents();
+    }
     
     
     function sendAppointmentRequest() {
@@ -121,12 +124,12 @@ function initializeCalendar(apiUrl, userRole) {
             return response.json();
         })
         .then(data => {
-            console.log("Response data:", data);
-            alert('Appointment scheduled successfully');
+            console.log("Adding event with title:", data.appointment.status, "and color:", data.appointment.color);
+
         
             const existingEvent = calendar.getEvents().find(event => 
-                event.start.toISOString() === data.start && 
-                event.end.toISOString() === data.end &&
+                event.start.toISOString() === data.appointment.start && 
+                event.end.toISOString() === data.appointment.end &&
                 event.title === "Available"
             );
             if (existingEvent) {
@@ -134,11 +137,17 @@ function initializeCalendar(apiUrl, userRole) {
             }
         
             calendar.addEvent({
-                title: 'Appointment',
-                start: data.start,
-                end: data.end,
-                color: 'amber'
+                title: data.appointment.status,
+                start: data.appointment.start,
+                end: data.appointment.end,
+                color: data.appointment.color,
+                textColor: 'white'
             });
+
+            reloadEvents();
+            
+            console.log("Adding event with title:", data.appointment.status, "and color:", data.appointment.color);
+
         
             $('#appointmentModal').modal('hide');
         })
@@ -150,6 +159,8 @@ function initializeCalendar(apiUrl, userRole) {
 
     function handleEventClick(info) {
         console.log("Event clicked:", info);
+        console.log("Event title:", info.event.title, "Event color:", info.event.backgroundColor);
+    
         
         if (userRole === 'patient' && info.event.title === "Available") {
             const startStr = info.event.start.toISOString();
@@ -176,6 +187,7 @@ function initializeCalendar(apiUrl, userRole) {
         fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            console.log("Data received from backend:", data);
             successCallback(data);
         })
         .catch(error => {
@@ -183,6 +195,7 @@ function initializeCalendar(apiUrl, userRole) {
             console.error('Error fetching events:', error);
         });
     }
+    
 
     try {
         calendar = new FullCalendar.Calendar(calendarEl, {

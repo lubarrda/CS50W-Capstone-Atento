@@ -209,31 +209,6 @@ class DoctorCalendarView(PatientRequiredMixin, DetailView):
     template_name = 'atento_care/doctor_calendar.html'
 
 
-@login_required
-def appointment_create_view(request, pk, start, end):
-    doctor = get_object_or_404(Doctor, id=pk)
-    start_datetime = timezone.make_aware(datetime.strptime(start, '%Y%m%dT%H%M%S'))
-    end_datetime = timezone.make_aware(datetime.strptime(end, '%Y%m%dT%H%M%S'))
-
-    print("Start time:", start_datetime.time())
-    print("End time:", end_datetime.time())
-    print("Weekday:", start_datetime.weekday() + 1)
-
-    # Ensure that this time slot is available
-    availabilities = DoctorAvailability.objects.filter(doctor=doctor, day_of_week=start_datetime.weekday() + 1, start_time__lte=start_datetime.time(), end_time__gte=end_datetime.time())
-    if not availabilities.exists():
-        return HttpResponseBadRequest("This time slot is not available")
-
-    appointment = ScheduledAppointment.objects.create(
-        patient=request.user.patient,
-        doctor=doctor,
-        start_time=start_datetime,
-        end_time=end_datetime,
-        status='REQUESTED',
-    )
-
-    return redirect('view_appointments')
-
 #########################
 
 @login_required
@@ -258,20 +233,5 @@ def calendar_view(request, doctor_id):
                     'end': end_datetime.isoformat(),
                     'color': 'green',
                 })
-
-    for appointment in appointments:
-        start_datetime = timezone.make_aware(datetime.combine(appointment.date, appointment.start_time, tzinfo=utc))
-        end_datetime = timezone.make_aware(datetime.combine(appointment.date, appointment.end_time, tzinfo=utc))
-
-        events.append({
-            'type': 'appointment',
-            'start_time': start_datetime,
-            'end_time': end_datetime,
-            'patient': appointment.patient,
-        })
-
-    return render(request, 'atento_care/doctor_calendar.html', {
-        'doctor': doctor,
-        'events': events,
-    })
+    
 

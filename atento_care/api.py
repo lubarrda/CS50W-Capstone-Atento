@@ -31,12 +31,17 @@ def api_availability(request, doctor_id=None):
                         end_time__lte=end_datetime
                     ).exists()
 
+                    title = 'Available' if not is_booked else 'Booked'
+                    color = 'green' if not is_booked else 'red'
+
                     events.append({
-                        'title': 'Booked' if is_booked else 'Available',
+                        'id': a.id,
+                        'title': title,
                         'start': start_datetime.isoformat(),
                         'end': end_datetime.isoformat(),
-                        'color': 'red' if is_booked else 'green',
-                        'is_booked': is_booked  # este campo ahora sólo sirve para indicar el estado en el frontend
+                        'color': color,
+                        'status': title
+
                     })
 
         for sa in scheduled_appointments:
@@ -49,19 +54,57 @@ def api_availability(request, doctor_id=None):
                 color = 'pink'
                 title = 'ACCEPTED'
 
-
-            # Combina la fecha y la hora en un solo objeto datetime
             start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time.time()))
             end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time.time()))
 
             events.append({
+                'id': sa.id,
                 'title': title,
                 'start': start_datetime.isoformat(),
                 'end': end_datetime.isoformat(),
-                'color': color
+                'color': color,
+                'status': sa.status  # Agrega un campo de estado
             })
 
         return JsonResponse(events, safe=False)
+
+    elif request.method == 'POST':
+        event_id = request.POST.get('event_id')
+        notes = request.POST.get('notes', '')  
+
+        try:
+            availability = DoctorAvailability.objects.get(id=event_id)
+            patient = Patient.objects.get(user=request.user) 
+
+            day = timezone.now() + timedelta(days=(availability.day_of_week - timezone.now().weekday() - 1) % 7)
+            start_time = timezone.make_aware(datetime.combine(day.date(), availability.start_time))
+            end_time = timezone.make_aware(datetime.combine(day.date(), availability.end_time))
+
+            new_appointment = ScheduledAppointment(
+                doctor=availability.doctor,
+                patient=patient,
+                start_time=start_time,
+                end_time=end_time,
+                date=start_time.date(),
+                status='REQUESTED',
+                patient_notes=notes,
+            )
+            new_appointment.save()
+
+        # Incluyendo detalles de la nueva cita en la respuesta JSON
+            return JsonResponse({
+                'status': 'success',
+                'appointmentDetails': {
+                    'id': new_appointment.id,
+                    'start': start_time.isoformat(),
+                    'end': end_time.isoformat(),
+                    'status': 'REQUESTED',
+                }
+            }, status=200)
+
+        except DoctorAvailability.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Availability not found'}, status=404)
+
 
 
 @csrf_exempt
@@ -88,30 +131,31 @@ def api_create_appointment(request):
             patient = Patient.objects.get(user=request.user)
             
             with transaction.atomic():
-                # Check if the slot is already booked
-                if ScheduledAppointment.objects.filter(
+                # Encuentra el slot de disponibilidad que corresponde a los tiempos especificados
+                availability_slot = DoctorAvailability.objects.filter(
                     doctor=doctor,
-                    start_time__lt=end_time,
-                    end_time__gt=start_time,
-                ).exists():
-                    return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
+                    start_time__lte=start_time.time(),
+                    end_time__gte=end_time.time(),
+                    day_of_week=start_time.isoweekday()
+                ).first()
                 
-                # Create a new appointment
-                new_appointment = ScheduledAppointment(
-                    doctor=doctor, 
-                    patient=patient, 
-                    start_time=start_time, 
-                    end_time=end_time, 
-                    date=start_time.date(), 
-                    status='REQUESTED', 
-                    patient_notes=patient_notes
-
-                )
-                new_appointment.save()
-
-            return JsonResponse({'status': 'success', 'appointment': {'title': 'REQUESTED', 'status': 'REQUESTED', 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
-
-
+                # Si se encontró un slot de disponibilidad, crea una nueva cita
+                if availability_slot:
+                    # Crea una nueva entrada en ScheduledAppointment
+                    new_appointment = ScheduledAppointment(
+                        doctor=doctor,
+                        patient=patient,
+                        start_time=start_time,
+                        end_time=end_time,
+                        date=start_time.date(),
+                        status='REQUESTED',
+                        patient_notes=patient_notes
+                    )
+                    new_appointment.save()
+                    
+                    return JsonResponse({'status': 'success', 'appointment': {'title': 'REQUESTED', 'status': 'REQUESTED', 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
+                else:
+                    return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
         except ValueError as e:
             # Handle specific error for datetime parsing
             return JsonResponse({'status': 'fail', 'error': f"Invalid data format: {str(e)}"}, status=400)
@@ -122,3 +166,4 @@ def api_create_appointment(request):
     
     else:
         return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
+

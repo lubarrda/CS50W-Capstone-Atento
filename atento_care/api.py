@@ -99,6 +99,7 @@ def api_availability(request, doctor_id=None):
                     'start': start_time.isoformat(),
                     'end': end_time.isoformat(),
                     'status': 'REQUESTED',
+                    'patient_notes': notes,
                 }
             }, status=200)
 
@@ -109,61 +110,4 @@ def api_availability(request, doctor_id=None):
 
 @csrf_exempt
 def api_create_appointment(request):
-    print("Request method:", request.method)
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            
-            # Parse start and end time and convert them from UTC to local time
-            start_time = datetime.fromisoformat(data.get('start').replace("Z", "+00:00")).astimezone(timezone.get_current_timezone())
-            end_time = datetime.fromisoformat(data.get('end').replace("Z", "+00:00")).astimezone(timezone.get_current_timezone())
-
-            # Get doctor ID and patient notes
-            doctor_id = data.get('doctor_id')
-            patient_notes = data.get('notes')
-            
-            # Validate doctor ID
-            if not doctor_id or doctor_id == 'null':
-                return HttpResponseBadRequest("Invalid doctor ID")
-            
-            # Get doctor and patient objects
-            doctor = Doctor.objects.get(user__id=doctor_id)
-            patient = Patient.objects.get(user=request.user)
-            
-            with transaction.atomic():
-                # Encuentra el slot de disponibilidad que corresponde a los tiempos especificados
-                availability_slot = DoctorAvailability.objects.filter(
-                    doctor=doctor,
-                    start_time__lte=start_time.time(),
-                    end_time__gte=end_time.time(),
-                    day_of_week=start_time.isoweekday()
-                ).first()
-                
-                # Si se encontró un slot de disponibilidad, crea una nueva cita
-                if availability_slot:
-                    # Crea una nueva entrada en ScheduledAppointment
-                    new_appointment = ScheduledAppointment(
-                        doctor=doctor,
-                        patient=patient,
-                        start_time=start_time,
-                        end_time=end_time,
-                        date=start_time.date(),
-                        status='REQUESTED',
-                        patient_notes=patient_notes
-                    )
-                    new_appointment.save()
-                    
-                    return JsonResponse({'status': 'success', 'appointment': {'title': 'REQUESTED', 'status': 'REQUESTED', 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
-                else:
-                    return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
-        except ValueError as e:
-            # Handle specific error for datetime parsing
-            return JsonResponse({'status': 'fail', 'error': f"Invalid data format: {str(e)}"}, status=400)
-        
-        except Exception as e:
-            # Handle other exceptions
-            return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
-    
-    else:
-        return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
-
+    print ("hola")

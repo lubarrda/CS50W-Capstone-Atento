@@ -17,13 +17,6 @@ import json
 from django.utils.timezone import utc
 
 
-
-
-
-
-
-
-
 def register_request(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)

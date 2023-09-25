@@ -27,6 +27,5 @@ urlpatterns = [
     path('doctors/', DoctorListView.as_view(), name='doctor_list'),
     path('doctor/<int:pk>/calendar/', DoctorCalendarView.as_view(), name='doctor_calendar'),
     path('api/create_appointment/', api_create_appointment, name='api_create_appointment'),
-
     
 ]

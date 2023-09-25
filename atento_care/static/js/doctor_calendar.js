@@ -34,6 +34,8 @@
 
         // Set the date field with the formatted start date
         $('#appointmentDate').val(formatDate(startStr));
+        $('#patientNotes').val('');
+        $('#appointmentStatus').val("Available");
 
         // Clear and populate the start and end time fields
         startTimeSelect.empty();
@@ -75,20 +77,6 @@
         $('#appointmentDate').data('start', startStr);
         $('#appointmentDate').data('end', endStr);
 
-        // Check if we are editing an existing appointment or creating a new one
-    // Check if we are editing an existing appointment or creating a new one
-    if (existingEvent) {
-        console.log(existingEvent);
-        // Set the patientNotes value from existingEvent.extendedProps.notes
-        $('#patientNotes').val(existingEvent.extendedProps.notes);
-        $('#appointmentStatus').val(existingEvent.status);
-        // ... (you can add any other fields you need to display/edit here) ...
-    } else {
-        // Clear the patientNotes field if existingEvent is undefined
-        $('#patientNotes').val('');
-        $('#appointmentStatus').val("Available");
-    }
-
 
         // Display the appointment modal
         $('#appointmentModal').modal('show');
@@ -106,8 +94,8 @@
         const selectedTimeRange = $('#startTime').val();
 
         // Validate the data
-        if (!notes || !selectedTimeRange) {
-            alert("Please provide notes and select a time range");
+        if (!notes) {
+            alert("Please provide notes");
             return;
         }
 
@@ -185,16 +173,12 @@
         
             if (existingEventToUpdate) {
                 // Update the existing event
-                existingEventToUpdate.setProp('title', appointment.status || "REQUESTED");
-                existingEventToUpdate.setProp('color', appointment.color || "#FFBF00");
+                existingEventToUpdate.setProp('title', appointment.status );
+                existingEventToUpdate.setProp('color', appointment.color );
                 existingEventToUpdate.setExtendedProp('notes', appointment.patient_notes);
-                // Ensure the backend is returning event id and update it
-                existingEventToUpdate.setProp('id', appointment.id);
-            } else {
-                // Handle the case where no existing event is found
             }
         
-            console.log("Event Handling Complete");
+            console.log(data);
             reloadEvents();
         
             // Hide the appointment modal
@@ -220,10 +204,9 @@
         console.log("Extended Properties:", clickedEvent.extendedProps);
         
         const status = clickedEvent.title;
-        const patient_notes = clickedEvent.extendedProps.notes;
     
         if (userRole === 'doctor' && status === 'REQUESTED') {
-            showDoctorAppointmentModal(clickedEvent);
+            // console.log(all)
         } else if (userRole === 'patient' && status === "Available") {
             const startStr = clickedEvent.start.toISOString();
             const endStr = clickedEvent.end ? clickedEvent.end.toISOString() : null;
@@ -233,36 +216,6 @@
         }
     }
     
-    
-    function showDoctorAppointmentModal(event) {
-        console.log("Function triggered.", event);
-        console.log("Attempting to show doctor modal...");
-        $('#doctorAppointmentDate').val(event.start.toISOString());
-        $('#doctorStartTime').val(event.start.toLocaleTimeString());
-        // Accessing patient_notes directly from event object
-        $('#doctorPatientNotes').val(event.extendedProps.notes); 
-        $('#doctorAppointmentStatus').val(event.title);
-    
-        // Show the modal
-        $('#doctorModal').modal('show');
-    }
-    
-    
-    $('#confirmDoctorAppointment').click(function() {
-        const eventToUpdate = calendar.getEventById($('#doctorAppointmentDate').val()); // Assuming you're using the date as an ID (or you can use another mechanism)
-    
-        if (eventToUpdate) {
-            const newStatus = $('#doctorAppointmentStatus').val();
-            eventToUpdate.setProp('title', newStatus);
-    
-            // Add any logic here to send the updated status to the server.
-            // For now, just close the modal.
-            $('#doctorModal').modal('hide');
-        } else {
-            console.error('Failed to find the event to update.');
-        }
-    });
-
     
 
 

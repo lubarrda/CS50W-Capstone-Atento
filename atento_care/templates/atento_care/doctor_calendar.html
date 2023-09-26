@@ -75,48 +75,4 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
-<!-- Doctor Appointment Modal -->
-<div class="modal fade" id="doctorModal" tabindex="-1" role="dialog" aria-labelledby="doctorModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="doctorModalLabel">Manage Appointment</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="doctorModalForm">
-          <div class="form-group">
-            <label for="doctorAppointmentDate">Appointment Date:</label>
-            <input type="text" class="form-control" id="doctorAppointmentDate" readonly>
-          </div>
-          <div class="form-group">
-            <label for="doctorStartTime">Appointment Time:</label>
-            <input type="text" class="form-control" id="doctorStartTime" readonly>
-          </div>
-          <div class="form-group">
-            <label for="doctorAppointmentStatus">Status:</label>
-            <select class="form-control" id="doctorAppointmentStatus" required>
-              <option value="REQUESTED">Requested</option>
-              <option value="ACCEPTED">Accepted</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="CANCELLED">Cancelled</option>
-              <option value="COMPLETED">Completed</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="doctorPatientNotes">Patient Notes:</label>
-            <textarea class="form-control" id="doctorPatientNotes" rows="3" readonly></textarea>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmDoctorAppointment">Save Changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 {% endblock %}

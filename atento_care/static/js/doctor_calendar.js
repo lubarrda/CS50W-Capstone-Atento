@@ -21,9 +21,6 @@
 
     // Function to display the patient appointment modal with necessary information
     function showAppointmentModal(start_str, end_str ) {
-        console.log("Start Date String:", start_str);
-        console.log("End Date String:", end_str);
-
 
         const start_time_select = $('#startTime');
         const end_time_select = $('#endTime');
@@ -189,10 +186,25 @@
         
     }
 
+    function showDoctorModal(clickedEvent) {
+        console.log("showDoctorModal called"); // Debug line
+        // Populate the modal fields with the event data
+        $('#doctorAppointmentDate').val(clickedEvent.start.toDateString());
+        $('#doctorAppointmentTime').val(`${clickedEvent.start.toTimeString().split(' ')[0]} - ${clickedEvent.end.toTimeString().split(' ')[0]}`);
+        $('#doctorAppointmentStatus').val(clickedEvent.extendedProps.status);
+        $('#doctorNotes').val('');
+        $('#patientNotes').val(clickedEvent.extendedProps.patient_notes);
+
+
+        // Show the modal
+        $('#doctorModal').modal('show');
+    }
+
+
     
     function handleEventClick(info) {
+        console.log("handleEventClick called"); // Debug line
         const clickedEvent = info.event;
-    
         // Log all the data of the clicked event
         console.log("Event Details:", info.event);
         console.log("ID:", clickedEvent.id);
@@ -201,14 +213,13 @@
         console.log("End Time:", clickedEvent.end ? clickedEvent.end.toISOString() : "N/A");
         console.log("Extended Properties:", clickedEvent.extendedProps);
         
-        const status = clickedEvent.title;
-    
-        if (userRole === 'doctor' && status === 'REQUESTED') {
-            // console.log(all)
-        } else if (userRole === 'patient' && status === "Available") {
+        
+        if (userRole === 'doctor' && clickedEvent.extendedProps.status === 'REQUESTED') {
+            showDoctorModal(clickedEvent);
+        } else if (userRole === 'patient' && clickedEvent.extendedProps.status === "Available") {
             const startStr = clickedEvent.start.toISOString();
             const endStr = clickedEvent.end ? clickedEvent.end.toISOString() : null;
-            showAppointmentModal(startStr, endStr, !status.includes('Available') ? clickedEvent : null);
+            showAppointmentModal(startStr, endStr, !extendedProps.status.includes('Available') ? clickedEvent : null);
         } else {
             alert("You can only select Available slots to book an appointment.");
         }

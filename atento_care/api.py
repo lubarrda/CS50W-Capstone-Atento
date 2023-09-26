@@ -1,4 +1,3 @@
-# Import necessary modules and classes from Django and other libraries
 from django.http import JsonResponse
 from .models import DoctorAvailability, ScheduledAppointment, Doctor, Patient
 from django.contrib.auth.decorators import login_required
@@ -41,15 +40,15 @@ def api_availability(request, doctor_id=None):
 
                     # Appending the event to the events list
                     events.append({
+                        'id': a.id,
                         'title': title,
                         'start': start_datetime.isoformat(),
                         'end': end_datetime.isoformat(),
                         'color': color,
                         'status': title
+
                     })
 
-        # Adding scheduled appointments to the events 
-        # (For each scheduled appointment (sa) in scheduled_appointments, it creates an event object with information about the appointment)
         for sa in scheduled_appointments:
             color = ''
             title = ''
@@ -60,16 +59,18 @@ def api_availability(request, doctor_id=None):
                 color = 'pink'
                 title = 'ACCEPTED'
 
-            # start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time.time()))
-            # end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time.time()))
+            start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time.time()))
+            end_datetime = timezone.make_aware(datetime.combine(sa.date, sa.end_time.time()))
 
-            # events.append({
-            #     'title': title,
-            #     'start': start_datetime.isoformat(),
-            #     'end': end_datetime.isoformat(),
-            #     'color': color,
-            #     'status': sa.status
-            # })
+            events.append({
+                'id': sa.id,
+                'title': title,
+                'start': start_datetime.isoformat(),
+                'end': end_datetime.isoformat(),
+                'color': color,
+                'status': sa.status,
+                'patient_notes': sa.patient_notes,
+            })
 
         return JsonResponse(events, safe=False)
 
@@ -85,7 +86,7 @@ def api_create_appointment(request):
             end_time = datetime.fromisoformat(data.get('end').replace("Z", "+00:00")).astimezone(timezone.get_current_timezone())
 
             doctor_id = data.get('doctor_id')
-            patient_notes = data.get('notes')
+            patient_notes = data.get('patient_notes')
             
             if not doctor_id or doctor_id == 'null':
                 return HttpResponseBadRequest("Invalid doctor ID")
@@ -113,7 +114,7 @@ def api_create_appointment(request):
                     )
                     new_appointment.save()
                     
-                    return JsonResponse({'status': 'success', 'appointment': {'title': 'REQUESTED', 'status': 'REQUESTED', 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
+                    return JsonResponse({'status': 'success', 'appointment': { 'title': 'REQUESTED', 'status': 'REQUESTED', 'patient_notes': 'patient_notes', 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
                 else:
                     return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
         except ValueError as e:

@@ -53,7 +53,7 @@ class ScheduledAppointment(models.Model):
         ('ACCEPTED', 'Accepted'),
         ('REJECTED', 'Rejected'),
         ('CANCELLED', 'Cancelled'),
-        ('COMPLETED', 'Completed'),
+        ('COMPLETED', 'Completed'), #to be used maybe in the future#
     ]
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)

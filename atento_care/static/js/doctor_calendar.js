@@ -83,6 +83,8 @@
         calendar.refetchEvents();
     }
 
+    let csrf_token; // Define csrf_token at a higher scope
+
     // Function to send appointment request to the backend
     function sendAppointmentRequest() {
         // Get necessary data from the form
@@ -153,14 +155,24 @@
         // After receiving the response from the backend
         .then(data => {
             console.log("Received response from the backend:", data);
-        
+    
             // here we are linking the data with the new variable, appointment
             const appointment = data.appointment;
-        
+    
             if (!appointment) {
                 throw new Error("No appointment data in the response.");
             }
-        
+
+            // Remove temporary event from calendar
+            const tempEvent = calendar.getEvents().find(event => 
+                event.start.toISOString() === data.start && 
+                event.end.toISOString() === data.end &&
+                !event.id  // this is a temporary event if it doesn't have an ID
+            );
+            if (tempEvent) {
+                tempEvent.remove();
+            }
+    
             // Create a new event in the calendar
             calendar.addEvent({
                 title: appointment.status,
@@ -168,23 +180,23 @@
                 end: appointment.end,
                 color: appointment.color,
                 extendedProps: {
-                patient_notes: appointment.patient_notes
-        }
-    });
-
-    console.log(data);
-    reloadEvents();
-
-    // Hide the appointment modal
-    $('#appointmentModal').modal('hide');
+                    patient_notes: appointment.patient_notes
+                }
+            });
+    
+            console.log(data);
+            reloadEvents();
+    
+            // Hide the appointment modal
+            $('#appointmentModal').modal('hide');
         })
         .catch(error => {
             // Handle any errors that occur during the fetch
             console.error('Error:', error);
             alert('Error scheduling appointment: ' + (error.error || 'The time slot may not be available or already booked.'));
         });
-        
     }
+
 
     function showDoctorModal(clickedEvent) {
         console.log("showDoctorModal called"); // Debug line
@@ -192,13 +204,56 @@
         $('#doctorAppointmentDate').val(clickedEvent.start.toDateString());
         $('#doctorAppointmentTime').val(`${clickedEvent.start.toTimeString().split(' ')[0]} - ${clickedEvent.end.toTimeString().split(' ')[0]}`);
         $('#doctorAppointmentStatus').val(clickedEvent.extendedProps.status);
-        $('#doctorNotes').val('');
         $('#patientNotes').val(clickedEvent.extendedProps.patient_notes);
 
+        // Check if doctor's notes exist in the clickedEvent data and populate the field
+        const doctor_notes = clickedEvent.extendedProps.doctor_notes || '';
+        $('#doctorNotes').val(doctor_notes);
 
         // Show the modal
         $('#doctorModal').modal('show');
+
+        // Event listener for the "Update Appointment" button
+        $('#updateAppointment').off('click').click(function() {
+            // Get the updated status and doctor's notes from the modal
+            const status = $('#doctorAppointmentStatus').val();
+            const doctor_notes = $('#doctorNotes').val();
+            const event_id = clickedEvent.id;
+            
+            // Call the function to send the updated data to the backend
+            updateAppointment(event_id, status, doctor_notes, clickedEvent);
+        });
+
     }
+
+
+    function updateAppointment(event_id, status, doctor_notes, clickedEvent) {
+        // Send a PUT request to the backend to update the appointment
+        fetch(`/api/update_appointment/${event_id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrf_token  // Assume you have the CSRF token
+            },
+            body: JSON.stringify({
+                status: status,
+                doctor_notes: doctor_notes
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response
+            alert('Appointment updated successfully!');
+            $('#doctorModal').modal('hide'); // hide the modal
+            clickedEvent.setExtendedProp('doctor_notes', doctor_notes);
+        })
+        .catch(error => {
+            // Handle any errors
+            console.error('Error updating appointment:', error);
+            alert('Error updating appointment.');
+        });
+    }
+
 
 
     
@@ -219,7 +274,7 @@
         } else if (userRole === 'patient' && clickedEvent.extendedProps.status === "Available") {
             const startStr = clickedEvent.start.toISOString();
             const endStr = clickedEvent.end ? clickedEvent.end.toISOString() : null;
-            showAppointmentModal(startStr, endStr, !extendedProps.status.includes('Available') ? clickedEvent : null);
+            showAppointmentModal(startStr, endStr, !clickedEvent.extendedProps.status.includes('Available') ? clickedEvent : null);
         } else {
             alert("You can only select Available slots to book an appointment.");
         }

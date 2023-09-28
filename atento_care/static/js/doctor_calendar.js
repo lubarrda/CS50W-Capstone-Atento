@@ -3,6 +3,9 @@
     console.log("initializeCalendar called with API URL:", apiUrl, "and user role:", userRole);
 
     const calendarEl = document.getElementById('calendar');
+    const doctor_id = calendarEl.getAttribute("data-doctor-id");
+    let calendar;
+    let csrf_token; // Define csrf_token at a higher scope
 
     // Check if the calendar element exists
     if (!calendarEl) {
@@ -10,8 +13,10 @@
         return;
     }
 
-    const doctor_id = calendarEl.getAttribute("data-doctor-id");
-    let calendar;
+    // Function to reload calendar events
+    function reloadEvents() {
+        calendar.refetchEvents();
+    }
 
     // Function to format date in a readable string format
     function formatDate(date) {
@@ -77,13 +82,6 @@
         // Display the appointment modal
         $('#appointmentModal').modal('show');
     }
-
-    // Function to reload calendar events
-    function reloadEvents() {
-        calendar.refetchEvents();
-    }
-
-    let csrf_token; // Define csrf_token at a higher scope
 
     // Function to send appointment request to the backend
     function sendAppointmentRequest() {
@@ -253,9 +251,6 @@
             alert('Error updating appointment.');
         });
     }
-
-
-
     
     function handleEventClick(info) {
         console.log("handleEventClick called"); // Debug line
@@ -280,10 +275,7 @@
         }
     }
     
-    
 
-
-    
     function handleEventMouseEnter(info) {
         if (info.event.title === "Available") {
             info.el.style.cursor = 'pointer';

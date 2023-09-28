@@ -202,29 +202,3 @@ class DoctorCalendarView(PatientRequiredMixin, DetailView):
     template_name = 'atento_care/doctor_calendar.html'
 
 
-#########################
-
-@login_required
-def calendar_view(request, doctor_id):
-    doctor = Doctor.objects.get(pk=doctor_id)
-    availabilities = DoctorAvailability.objects.filter(doctor=doctor)
-    appointments = ScheduledAppointment.objects.filter(doctor=doctor)
-
-    events = []
-
-    for availability in availabilities:
-        for i in range(30):  # Loop through a month
-            day = timezone.now() + timedelta(days=i)
-            if day.weekday() == availability.day_of_week - 1:  # Python's weekday() function starts with 0=Monday
-                start_datetime = timezone.make_aware(datetime.combine(day.date(), availability.start_time))
-                end_datetime = timezone.make_aware(datetime.combine(day.date(), availability.end_time))
-                
-
-                events.append({
-                    'title': 'Available',
-                    'start': start_datetime.isoformat(),
-                    'end': end_datetime.isoformat(),
-                    'color': 'green',
-                })
-    
-

@@ -114,7 +114,7 @@ def api_create_appointment(request):
                     )
                     new_appointment.save()
                     
-                    return JsonResponse({'status': 'success', 'appointment': { 'title': 'REQUESTED', 'status': 'REQUESTED', 'patient_notes': 'patient_notes', 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
+                    return JsonResponse({'status': 'success', 'appointment': { 'title': 'REQUESTED', 'status': 'REQUESTED', 'patient_notes': patient_notes, 'color': '#FFBF00', 'start': start_time.isoformat(), 'end': end_time.isoformat()}})
                 else:
                     return JsonResponse({'status': 'fail', 'error': "Slot not available or already booked"}, status=400)
         except ValueError as e:

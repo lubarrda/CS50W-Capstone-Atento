@@ -128,22 +128,25 @@ def api_create_appointment(request):
 
 @csrf_exempt
 def api_update_appointment(request, appointment_id):
+    # Fetch the ScheduledAppointment object using the appointment_id from URL
+    appointment = get_object_or_404(ScheduledAppointment, pk=appointment_id)
+
     if request.method == 'PUT':
         try:
             # Load the request body as JSON
             data = json.loads(request.body)
-            
+
             # Retrieve the updated status and doctor_notes from the request data
             status = data.get('status')
             doctor_notes = data.get('doctor_notes')
-            
-            # Fetch the ScheduledAppointment object using the appointment_id from URL
-            appointment = get_object_or_404(ScheduledAppointment, pk=appointment_id)
 
-            # Update the appointment object
-            appointment.status = status
-            appointment.doctor_notes = doctor_notes
-            appointment.save()  # Don't forget to save the updated object
+            if status in ['REJECTED', 'CANCELLED']:
+                appointment.delete()
+            else:
+                # Update the appointment object
+                appointment.status = status
+                appointment.doctor_notes = doctor_notes
+                appointment.save()  
 
             # Return a success response
             return JsonResponse({'status': 'success', 'message': 'Appointment updated successfully!'})

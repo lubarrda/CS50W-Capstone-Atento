@@ -213,8 +213,15 @@
         .then(data => {
             // Handle the response
             alert('Appointment updated successfully!');
+            if (status === 'REJECTED' || status === 'CANCELLED') {
+                // Remove the event from the calendar
+                clickedEvent.remove();
+            } else {
+                // If the status is not 'REJECTED' or 'CANCELLED', update the doctor_notes and other details
+                clickedEvent.setExtendedProp('doctor_notes', doctor_notes);
+                clickedEvent.setExtendedProp('status', status);
+            }
             $('#doctorModal').modal('hide'); // hide the modal
-            clickedEvent.setExtendedProp('doctor_notes', doctor_notes);
             reloadEvents();
         })
         .catch(error => {

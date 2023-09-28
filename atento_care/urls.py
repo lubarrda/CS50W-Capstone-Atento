@@ -6,7 +6,7 @@ from .views import (register_request, login_request, doctor_form, patient_form,
                     view_patient_profile,
                     add_availability, view_availability, DoctorListView, DoctorCalendarView )
 
-from .api import api_availability, api_create_appointment, api_update_appointment
+from .api import api_availability, api_create_appointment, api_update_appointment, api_get_appointment
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -28,6 +28,8 @@ urlpatterns = [
     path('doctor/<int:pk>/calendar/', DoctorCalendarView.as_view(), name='doctor_calendar'),
     path('api/create_appointment/', api_create_appointment, name='api_create_appointment'),
     path('api/update_appointment/<int:appointment_id>/', api_update_appointment, name='api_update_appointment'),
+    path('api/get_appointment/<int:event_id>/', api_get_appointment, name='api_get_appointment'),
+
 
     
 ]

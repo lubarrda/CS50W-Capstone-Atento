@@ -70,10 +70,10 @@ def api_availability(request, doctor_id=None):
                 'color': color,
                 'status': sa.status,
                 'patient_notes': sa.patient_notes,
+                'doctor_notes': sa.doctor_notes,
             })
 
         return JsonResponse(events, safe=False)
-
 
 @csrf_exempt
 def api_create_appointment(request):
@@ -155,5 +155,27 @@ def api_update_appointment(request, appointment_id):
             # Handle any other exception
             return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
     
+    else:
+        return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def api_get_appointment(request, event_id):
+    if request.method == 'GET':
+        # Fetch the ScheduledAppointment object using the event_id from URL
+        appointment = get_object_or_404(ScheduledAppointment, pk=event_id)
+
+        # Create a response dictionary with appointment details
+        response = {
+            'id': appointment.id,
+            'start': appointment.start_time.isoformat(),
+            'end': appointment.end_time.isoformat(),
+            'status': appointment.status,
+            'patient_notes': appointment.patient_notes,
+            'doctor_notes': appointment.doctor_notes
+        }
+
+        # Return the response as JSON
+        return JsonResponse(response)
+
     else:
         return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)

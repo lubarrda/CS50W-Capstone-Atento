@@ -155,25 +155,41 @@
 
 
     function showDoctorModal(clickedEvent) {
-        // Populate the modal fields with the event data
-        $('#doctorAppointmentDate').val(clickedEvent.start.toDateString());
-        $('#doctorAppointmentTime').val(`${clickedEvent.start.toTimeString().split(' ')[0]} - ${clickedEvent.end.toTimeString().split(' ')[0]}`);
-        $('#doctorAppointmentStatus').val(clickedEvent.extendedProps.status);
-        $('#patientNotes').val(clickedEvent.extendedProps.patient_notes);
-
-        // Check if doctor's notes exist in the clickedEvent data and populate the field
-        const doctor_notes = clickedEvent.extendedProps.doctor_notes || '';
-        $('#doctorNotes').val(doctor_notes);
-
-        // Show the modal
-        $('#doctorModal').modal('show');
-
+        const event_id = clickedEvent.id;
+    
+        // Fetch the existing event details from the backend
+        fetch(`/api/get_appointment/${event_id}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Use the existing comments from the response, if available
+            const doctor_notes = data.doctor_notes || '';
+    
+            // Populate the modal fields with the event data
+            $('#doctorAppointmentDate').val(clickedEvent.start.toISOString().split('T')[0]);
+            $('#doctorAppointmentTime').val(
+                `${clickedEvent.start.toISOString().split('T')[1].slice(0, -1)} - ${clickedEvent.end.toISOString().split('T')[1].slice(0, -1)}`
+            );
+            $('#doctorAppointmentStatus').val(clickedEvent.extendedProps.status);
+            $('#patientNotes').val(clickedEvent.extendedProps.patient_notes);
+            $('#doctorNotes').val(doctor_notes);
+    
+            // Show the modal
+            $('#doctorModal').modal('show');
+        })
+        .catch(error => {
+            console.error('Error fetching appointment details:', error);
+        });
+    
         // Event listener for the "Update Appointment" button
         $('#updateAppointment').off('click').click(function() {
             // Get the updated status and doctor's notes from the modal
             const status = $('#doctorAppointmentStatus').val();
             const doctor_notes = $('#doctorNotes').val();
-            const event_id = clickedEvent.id;
             
             // Call the function to send the updated data to the backend
             updateAppointment(event_id, status, doctor_notes, clickedEvent);
@@ -224,14 +240,15 @@
         console.log("Extended Properties:", clickedEvent.extendedProps);
         
         
-        if (userRole === 'doctor' && clickedEvent.extendedProps.status === 'REQUESTED') {
+        if (userRole === 'doctor' && clickedEvent.extendedProps.status !== 'Available' && clickedEvent.extendedProps.status !== 'Booked') {
             showDoctorModal(clickedEvent);
         } else if (userRole === 'patient' && clickedEvent.extendedProps.status === "Available") {
             const startStr = clickedEvent.start.toISOString();
             const endStr = clickedEvent.end ? clickedEvent.end.toISOString() : null;
             showAppointmentModal(startStr, endStr, clickedEvent.extendedProps.status.includes('Available'));
         } else {
-            alert("You can only select Available slots to book an appointment.");
+            alert("Sorry, you cannot book beyond your available slots."
+            );
         }
     }
     

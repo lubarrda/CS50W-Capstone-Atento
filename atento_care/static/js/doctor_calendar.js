@@ -5,7 +5,6 @@
     const calendarEl = document.getElementById('calendar');
     const doctor_id = calendarEl.getAttribute("data-doctor-id");
     let calendar;
-    let csrf_token; // Define csrf_token at a higher scope
 
     // Check if the calendar element exists
     if (!calendarEl) {
@@ -25,60 +24,23 @@
     }
 
     // Function to display the patient appointment modal with necessary information
-    function showAppointmentModal(start_str, end_str ) {
-
-        const start_time_select = $('#startTime');
-        const end_time_select = $('#endTime');
-
-        const start_date_time = new Date(start_str);
-        const end_date_time = new Date(end_str);
-
+    function showAppointmentModal(start_str, end_str) {
         // Set the date field with the formatted start date
         $('#appointmentDate').val(formatDate(start_str));
         $('#patientNotes').val('');
         $('#appointmentStatus').val("Available");
-
-        // Clear and populate the start and end time fields
-        start_time_select.empty();
-        end_time_select.empty();
-
-        // Initialize time options and populate the time selection fields
-        let current_time = new Date(start_date_time);
-        while (current_time < end_date_time) {
-            let next_time = new Date(current_time.getTime());
-            next_time.setMinutes(next_time.getMinutes() + 30);
-
-            if (next_time <= end_date_time) {
-                let optionValue = `${current_time.toISOString().split('T')[1].slice(0, -1)} - ${next_time.toISOString().split('T')[1].slice(0, -1)}`;
-                let optionElement = new Option(optionValue, optionValue);
-
-                start_time_select.append(optionElement);
-                end_time_select.append(optionElement.cloneNode(true));
-            }
-
-            current_time = next_time;
-        }
-
-        // // Enable the time selection fields
-        // startTimeSelect.prop('disabled', false);
-        // endTimeSelect.prop('disabled', false);
-
-        // Logic to adjust the selectable end time based on selected start time
-        start_time_select.change(function() {
-            let selectedStartOptionIndex = this.selectedIndex;
-            if (selectedStartOptionIndex >= 0) {
-                end_time_select.prop('disabled', false);
-                end_time_elect.children('option').each(function(index, option) {
-                    option.disabled = index <= selectedStartOptionIndex;
-                });
-            }
-        });
-
+    
+        // Set the start and end time inputs
+        let startOptionValue = new Date(start_str).toISOString().split('T')[1].slice(0, -1);
+        let endOptionValue = new Date(end_str).toISOString().split('T')[1].slice(0, -1);
+    
+        $('#startTime').val(startOptionValue);
+        $('#endTime').val(endOptionValue);
+    
         // Store the original start and end dates in the date element's data attributes
         $('#appointmentDate').data('start', start_str);
         $('#appointmentDate').data('end', end_str);
-
-
+    
         // Display the appointment modal
         $('#appointmentModal').modal('show');
     }
@@ -87,7 +49,6 @@
     function sendAppointmentRequest() {
         // Get necessary data from the form
         const patient_notes = $('#patientNotes').val();
-        const selected_time_range = $('#startTime').val();
 
         // Validate the data
         if (!patient_notes) {
@@ -98,13 +59,11 @@
         // Get the selected start and end times
         const startStr = $('#appointmentDate').data('start');
         const endStr = $('#appointmentDate').data('end');
-        const [start_time_str, end_time_str] = selected_time_range.split(' - ');
-        const start_date = new Date(startStr.split('T')[0] + 'T' + start_time_str + 'Z');
-        const end_date = new Date(endStr.split('T')[0] + 'T' + end_time_str + 'Z');
-
-        // Validate the date format
+        const start_date = new Date(startStr);
+        const end_date = new Date(endStr);
+        
         if (isNaN(start_date) || isNaN(end_date)) {
-            alert("Invalid date format. Please select a valid time range.");
+            alert('Invalid start or end time.');
             return;
         }
 
@@ -183,10 +142,30 @@
             });
     
             console.log(data);
-            reloadEvents();
-    
+            // calendar.refetchEvents();
+
             // Hide the appointment modal
             $('#appointmentModal').modal('hide');
+
+            // Set a success message in session storage
+            sessionStorage.setItem('appointmentMessage', 'Appointment requested successfully!');
+
+                // Refresh the page
+            location.reload();
+
+
+        })
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for the message in session storage
+            const message = sessionStorage.getItem('appointmentMessage');
+            if (message) {
+                // Display the message on the page
+                alert(message); // or use any other way to display the message on the page
+                
+                // Remove the message from session storage
+                sessionStorage.removeItem('appointmentMessage');
+            }
         })
         .catch(error => {
             // Handle any errors that occur during the fetch
@@ -224,6 +203,7 @@
 
     }
 
+let csrf_token; // Define csrf_token at a higher scope
 
     function updateAppointment(event_id, status, doctor_notes, clickedEvent) {
         // Send a PUT request to the backend to update the appointment

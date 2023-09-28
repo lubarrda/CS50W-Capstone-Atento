@@ -13,72 +13,35 @@
         return;
     }
 
-    // Function to reload calendar events
-    function reloadEvents() {
-        calendar.refetchEvents();
-    }
-
     // Function to format date in a readable string format
     function formatDate(date) {
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' };
         return new Date(date).toLocaleString(undefined, options);
     }
 
+        // Function to reload calendar events
+    function reloadEvents() {
+        calendar.refetchEvents();
+    }
+
     // Function to display the patient appointment modal with necessary information
-    function showAppointmentModal(start_str, end_str ) {
-
-        const start_time_select = $('#startTime');
-        const end_time_select = $('#endTime');
-
-        const start_date_time = new Date(start_str);
-        const end_date_time = new Date(end_str);
-
+    function showAppointmentModal(start_str, end_str) {
         // Set the date field with the formatted start date
         $('#appointmentDate').val(formatDate(start_str));
         $('#patientNotes').val('');
         $('#appointmentStatus').val("Available");
-
-        // Clear and populate the start and end time fields
-        start_time_select.empty();
-        end_time_select.empty();
-
-        // Initialize time options and populate the time selection fields
-        let current_time = new Date(start_date_time);
-        while (current_time < end_date_time) {
-            let next_time = new Date(current_time.getTime());
-            next_time.setMinutes(next_time.getMinutes() + 30);
-
-            if (next_time <= end_date_time) {
-                let optionValue = `${current_time.toISOString().split('T')[1].slice(0, -1)} - ${next_time.toISOString().split('T')[1].slice(0, -1)}`;
-                let optionElement = new Option(optionValue, optionValue);
-
-                start_time_select.append(optionElement);
-                end_time_select.append(optionElement.cloneNode(true));
-            }
-
-            current_time = next_time;
-        }
-
-        // // Enable the time selection fields
-        // startTimeSelect.prop('disabled', false);
-        // endTimeSelect.prop('disabled', false);
-
-        // Logic to adjust the selectable end time based on selected start time
-        start_time_select.change(function() {
-            let selectedStartOptionIndex = this.selectedIndex;
-            if (selectedStartOptionIndex >= 0) {
-                end_time_select.prop('disabled', false);
-                end_time_elect.children('option').each(function(index, option) {
-                    option.disabled = index <= selectedStartOptionIndex;
-                });
-            }
-        });
-
+    
+        // Set the start and end time inputs
+        let startOptionValue = new Date(start_str).toISOString().split('T')[1].slice(0, -1);
+        let endOptionValue = new Date(end_str).toISOString().split('T')[1].slice(0, -1);
+    
+        $('#startTime').val(startOptionValue);
+        $('#endTime').val(endOptionValue);
+    
         // Store the original start and end dates in the date element's data attributes
         $('#appointmentDate').data('start', start_str);
         $('#appointmentDate').data('end', end_str);
-
-
+    
         // Display the appointment modal
         $('#appointmentModal').modal('show');
     }
@@ -87,18 +50,18 @@
     function sendAppointmentRequest() {
         // Get necessary data from the form
         const patient_notes = $('#patientNotes').val();
-        const selected_time_range = $('#startTime').val();
-
+        const start_time_str = $('#startTime').val();
+        const end_time_str = $('#endTime').val();
+    
         // Validate the data
         if (!patient_notes) {
             alert("Please provide notes");
             return;
         }
-
-        // Get the selected start and end times
+    
+        // Get the selected start and end dates
         const startStr = $('#appointmentDate').data('start');
         const endStr = $('#appointmentDate').data('end');
-        const [start_time_str, end_time_str] = selected_time_range.split(' - ');
         const start_date = new Date(startStr.split('T')[0] + 'T' + start_time_str + 'Z');
         const end_date = new Date(endStr.split('T')[0] + 'T' + end_time_str + 'Z');
 
@@ -160,16 +123,6 @@
             if (!appointment) {
                 throw new Error("No appointment data in the response.");
             }
-
-            // Remove temporary event from calendar
-            const tempEvent = calendar.getEvents().find(event => 
-                event.start.toISOString() === data.start && 
-                event.end.toISOString() === data.end &&
-                !event.id  // this is a temporary event if it doesn't have an ID
-            );
-            if (tempEvent) {
-                tempEvent.remove();
-            }
     
             // Create a new event in the calendar
             calendar.addEvent({
@@ -183,11 +136,14 @@
             });
     
             console.log(data);
-            reloadEvents();
+
+            // Refresh the page
+            location.reload();
     
             // Hide the appointment modal
             $('#appointmentModal').modal('hide');
         })
+
         .catch(error => {
             // Handle any errors that occur during the fetch
             console.error('Error:', error);
@@ -197,26 +153,41 @@
 
 
     function showDoctorModal(clickedEvent) {
-        console.log("showDoctorModal called"); // Debug line
-        // Populate the modal fields with the event data
-        $('#doctorAppointmentDate').val(clickedEvent.start.toDateString());
-        $('#doctorAppointmentTime').val(`${clickedEvent.start.toTimeString().split(' ')[0]} - ${clickedEvent.end.toTimeString().split(' ')[0]}`);
-        $('#doctorAppointmentStatus').val(clickedEvent.extendedProps.status);
-        $('#patientNotes').val(clickedEvent.extendedProps.patient_notes);
-
-        // Check if doctor's notes exist in the clickedEvent data and populate the field
-        const doctor_notes = clickedEvent.extendedProps.doctor_notes || '';
-        $('#doctorNotes').val(doctor_notes);
-
-        // Show the modal
-        $('#doctorModal').modal('show');
-
+        const event_id = clickedEvent.id;
+    
+        // Fetch the existing event details from the backend
+        fetch(`/api/get_appointment/${event_id}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Use the existing comments from the response, if available
+            const doctor_notes = data.doctor_notes || '';
+    
+            // Populate the modal fields with the event data
+            $('#doctorAppointmentDate').val(clickedEvent.start.toISOString().split('T')[0]);
+            $('#doctorAppointmentTime').val(
+                `${clickedEvent.start.toISOString().split('T')[1].slice(0, -1)} - ${clickedEvent.end.toISOString().split('T')[1].slice(0, -1)}`
+            );
+            $('#doctorAppointmentStatus').val(clickedEvent.extendedProps.status);
+            $('#patientNotes').val(clickedEvent.extendedProps.patient_notes);
+            $('#doctorNotes').val(doctor_notes);
+    
+            // Show the modal
+            $('#doctorModal').modal('show');
+        })
+        .catch(error => {
+            console.error('Error fetching appointment details:', error);
+        });
+    
         // Event listener for the "Update Appointment" button
         $('#updateAppointment').off('click').click(function() {
             // Get the updated status and doctor's notes from the modal
             const status = $('#doctorAppointmentStatus').val();
             const doctor_notes = $('#doctorNotes').val();
-            const event_id = clickedEvent.id;
             
             // Call the function to send the updated data to the backend
             updateAppointment(event_id, status, doctor_notes, clickedEvent);
@@ -231,7 +202,7 @@
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrf_token  // Assume you have the CSRF token
+                'X-CSRFToken': csrf_token  // 
             },
             body: JSON.stringify({
                 status: status,
@@ -244,6 +215,7 @@
             alert('Appointment updated successfully!');
             $('#doctorModal').modal('hide'); // hide the modal
             clickedEvent.setExtendedProp('doctor_notes', doctor_notes);
+            reloadEvents();
         })
         .catch(error => {
             // Handle any errors
@@ -253,7 +225,6 @@
     }
     
     function handleEventClick(info) {
-        console.log("handleEventClick called"); // Debug line
         const clickedEvent = info.event;
         // Log all the data of the clicked event
         console.log("Event Details:", info.event);
@@ -264,18 +235,20 @@
         console.log("Extended Properties:", clickedEvent.extendedProps);
         
         
-        if (userRole === 'doctor' && clickedEvent.extendedProps.status === 'REQUESTED') {
+        if (userRole === 'doctor' && clickedEvent.extendedProps.status !== 'Available' && clickedEvent.extendedProps.status !== 'Booked') {
             showDoctorModal(clickedEvent);
         } else if (userRole === 'patient' && clickedEvent.extendedProps.status === "Available") {
             const startStr = clickedEvent.start.toISOString();
             const endStr = clickedEvent.end ? clickedEvent.end.toISOString() : null;
-            showAppointmentModal(startStr, endStr, !clickedEvent.extendedProps.status.includes('Available') ? clickedEvent : null);
+            showAppointmentModal(startStr, endStr, clickedEvent.extendedProps.status.includes('Available'));
         } else {
-            alert("You can only select Available slots to book an appointment.");
+            alert("Sorry, you cannot book beyond your available slots."
+            );
         }
     }
     
-
+    
+    
     function handleEventMouseEnter(info) {
         if (info.event.title === "Available") {
             info.el.style.cursor = 'pointer';
@@ -307,8 +280,6 @@
     }
     
     $('#confirmAppointment').click(sendAppointmentRequest);    
-
-
       
 }
 

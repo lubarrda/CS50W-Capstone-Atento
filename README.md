@@ -20,9 +20,13 @@ This JavaScript file is responsible for initializing and managing the dynamic ca
 ### `models.py`
 In this file, we define the database models for storing information about doctors, their availability, and scheduled appointments. It forms the basis for the application's data management and retrieval system.
 
+### `appointment_management.html`
+This file contributes to creating an advanced appointment management view, allowing doctors to easily filter and manage appointments based on their statuses and update necessary details accordingly.
+
 ## How to Run the Application
 
 1. **Clone the Repository**: Clone this repository to your local machine.
+3. **Install Dependencies**: Navigate to the project directory and run pip install -r requirements.txt to install all necessary dependencies.
 2. **Database Setup**: Apply migrations using the command `python manage.py migrate` to set up the database.
 3. **Run the Server**: Start the server using `python manage.py runserver` and visit `localhost:8000` in your web browser to access the application.
 4. **Create Superuser**: Create a superuser using `python manage.py createsuperuser` and follow the prompts to set up an admin account.
@@ -33,6 +37,10 @@ In this file, we define the database models for storing information about doctor
 This project is built using Django, a powerful web framework that encourages rapid development and clean, pragmatic design. It utilizes jQuery and FullCalendar for the dynamic and interactive frontend. Please note that the application supports different user roles, enhancing the flexibility and functionality of the scheduling system.
 
 ## Dependencies
+-Django
+-jQuery
+-FullCalendar
+-Bootstrap 
 
 
 Thank you for considering Atento Health Care for your scheduling needs. We are confident that this platform will streamline the appointment scheduling process, fostering a healthy and organized healthcare environment.

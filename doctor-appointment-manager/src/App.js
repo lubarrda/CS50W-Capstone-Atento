@@ -5,12 +5,12 @@ function App() {
 
   useEffect(() => {
     // Fetch CSRF token from cookie or Django frontend
-    const csrfToken = getCsrfToken(); // Define this function to fetch CSRF token
+    // const csrfToken = getCsrfToken(); // Define this function to fetch CSRF token
 
-    fetch('/api/get_all_appointments/', {
+    fetch(`/api/get_all_appointments/`, {
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken, // Include CSRF token in the request headers
+        // 'X-CSRFToken': csrfToken, // Include CSRF token in the request headers
       },
     })
       .then(response => response.json())
@@ -19,13 +19,13 @@ function App() {
 
   const handleStatusChange = (id, newStatus) => {
     // Fetch CSRF token again for the PUT request
-    const csrfToken = getCsrfToken(); // Define this function to fetch CSRF token
+    // const csrfToken = getCsrfToken(); // Define this function to fetch CSRF token
 
     fetch(`/api/update_appointment/${id}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken, // Include CSRF token in the request headers
+        // 'X-CSRFToken': csrfToken, // Include CSRF token in the request headers
       },
       body: JSON.stringify({ status: newStatus }),
     })

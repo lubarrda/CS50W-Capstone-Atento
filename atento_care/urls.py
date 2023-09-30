@@ -1,4 +1,6 @@
 from django.urls import path
+from django.views.generic import TemplateView
+
 
 from .views import (register_request, login_request, doctor_form, patient_form, 
                     home_view, logout_request, my_account, update_doctor_profile, 
@@ -6,7 +8,7 @@ from .views import (register_request, login_request, doctor_form, patient_form,
                     view_patient_profile,
                     add_availability, view_availability, DoctorListView, DoctorCalendarView )
 
-from .api import api_availability, api_create_appointment, api_update_appointment, api_get_appointment
+from .api import api_availability, api_create_appointment, api_update_appointment, api_get_appointment, get_all_appointments
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -29,6 +31,9 @@ urlpatterns = [
     path('api/create_appointment/', api_create_appointment, name='api_create_appointment'),
     path('api/update_appointment/<int:appointment_id>/', api_update_appointment, name='api_update_appointment'),
     path('api/get_appointment/<int:event_id>/', api_get_appointment, name='api_get_appointment'),
+    path('api/get_all_appointments/', get_all_appointments, name='get_all_appointments'),
+    path('appointments/', TemplateView.as_view(template_name='index.html')),  # Serve React app
+
 
 
     

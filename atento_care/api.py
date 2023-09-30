@@ -163,6 +163,7 @@ def api_update_appointment(request, appointment_id):
 
 @csrf_exempt
 def api_get_appointment(request, event_id):
+
     if request.method == 'GET':
         # Fetch the ScheduledAppointment object using the event_id from URL
         appointment = get_object_or_404(ScheduledAppointment, pk=event_id)
@@ -179,6 +180,33 @@ def api_get_appointment(request, event_id):
 
         # Return the response as JSON
         return JsonResponse(response)
+
+    else:
+        return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt
+def get_all_appointments(request):
+    if request.method == 'GET':
+        print("Getting all appointments...") 
+        # Fetch all ScheduledAppointment objects
+        appointments = ScheduledAppointment.objects.all()
+
+        response = []
+
+        # Iterate through all appointments and create response
+        for appointment in appointments:
+            response.append({
+                'id': appointment.id,
+                'start': appointment.start_time.isoformat(),
+                'end': appointment.end_time.isoformat(),
+                'status': appointment.status,
+                'patient_notes': appointment.patient_notes,
+                'doctor_notes': appointment.doctor_notes
+            })
+
+        # Return the response as JSON
+        return JsonResponse(response, safe=False)
 
     else:
         return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)

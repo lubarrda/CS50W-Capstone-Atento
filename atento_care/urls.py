@@ -32,7 +32,7 @@ urlpatterns = [
     path('api/update_appointment/<int:appointment_id>/', api_update_appointment, name='api_update_appointment'),
     path('api/get_appointment/<int:event_id>/', api_get_appointment, name='api_get_appointment'),
     path('api/get_all_appointments/', get_all_appointments, name='get_all_appointments'),
-    path('appointments/', TemplateView.as_view(template_name='index.html')),  # Serve React app
+    path('appointments/', TemplateView.as_view(template_name='index.html'), name='appointments')
 
 
 

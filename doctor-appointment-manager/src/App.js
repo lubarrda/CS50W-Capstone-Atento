@@ -38,7 +38,10 @@ function App() {
           return response.json();
       }
     })
-      .then(data => setAppointments(data));
+      .then(data => {
+        setAppointments(data);
+        console.log(data);  // Añadir esta línea para verificar los datos
+      });
   
     fetch('/api/get_user_type/', {
       headers: {
@@ -79,7 +82,13 @@ function App() {
               Date: {new Date(appt.start).toLocaleString()}
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Notes: {appt.patient_notes}
+                Patient: {appt.patient_username} 
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                Doctor: {appt.doctor_username}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                Patient Notes: {appt.patient_notes}
             </Typography>
             {/* Campo para notas del doctor */}
             {userType === 'DOCTOR' && (

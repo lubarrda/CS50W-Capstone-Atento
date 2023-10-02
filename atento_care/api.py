@@ -188,30 +188,35 @@ def api_get_appointment(request, event_id):
 @csrf_exempt
 def get_all_appointments(request):
     if request.method == 'GET':
-        print("Getting all appointments...") 
-        # Fetch all ScheduledAppointment objects from the doctor
-        doctor = request.user.doctor
-        appointments = ScheduledAppointment.objects.filter(doctor=doctor)
-
-
         response = []
+        try:
+            # Intenta obtener el doctor o paciente del usuario actual.
+            if hasattr(request.user, 'doctor'):
+                appointments = ScheduledAppointment.objects.filter(doctor=request.user.doctor)
+            elif hasattr(request.user, 'patient'):
+                appointments = ScheduledAppointment.objects.filter(patient=request.user.patient)
+            else:
+                return JsonResponse({'status': 'fail', 'error': 'User is not a doctor or patient'}, status=400)
 
-        # Iterate through all appointments and create response
-        for appointment in appointments:
-            response.append({
-                'id': appointment.id,
-                'start': appointment.start_time.isoformat(),
-                'end': appointment.end_time.isoformat(),
-                'status': appointment.status,
-                'patient_notes': appointment.patient_notes,
-                'doctor_notes': appointment.doctor_notes
-            })
+            # Itera a través de todas las citas y crea la respuesta.
+            for appointment in appointments:
+                response.append({
+                    'id': appointment.id,
+                    'start': appointment.start_time.isoformat(),
+                    'end': appointment.end_time.isoformat(),
+                    'status': appointment.status,
+                    'patient_notes': appointment.patient_notes,
+                    'doctor_notes': appointment.doctor_notes,
+                    'patient_username': appointment.patient.user.username,
+                    'doctor_username': appointment.doctor.user.username
+                })
 
-        # Return the response as JSON
+        except AttributeError as e:
+            return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
+
+        # Retorna la respuesta como JSON.
         return JsonResponse(response, safe=False)
 
-    else:
-        return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
 
 @login_required
 def api_get_user_type(request):

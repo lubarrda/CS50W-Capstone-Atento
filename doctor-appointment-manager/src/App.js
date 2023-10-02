@@ -29,6 +29,7 @@ function App() {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken, 
       },
+      credentials: 'include',
     })
       .then(response => {
         if (response.status === 404) {

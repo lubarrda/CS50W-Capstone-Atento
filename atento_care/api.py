@@ -189,8 +189,10 @@ def api_get_appointment(request, event_id):
 def get_all_appointments(request):
     if request.method == 'GET':
         print("Getting all appointments...") 
-        # Fetch all ScheduledAppointment objects
-        appointments = ScheduledAppointment.objects.all()
+        # Fetch all ScheduledAppointment objects from the doctor
+        doctor = request.user.doctor
+        appointments = ScheduledAppointment.objects.filter(doctor=doctor)
+
 
         response = []
 

@@ -190,7 +190,6 @@ def get_all_appointments(request):
     if request.method == 'GET':
         response = []
         try:
-            # Intenta obtener el doctor o paciente del usuario actual.
             if hasattr(request.user, 'doctor'):
                 appointments = ScheduledAppointment.objects.filter(doctor=request.user.doctor)
             elif hasattr(request.user, 'patient'):
@@ -198,7 +197,6 @@ def get_all_appointments(request):
             else:
                 return JsonResponse({'status': 'fail', 'error': 'User is not a doctor or patient'}, status=400)
 
-            # Itera a través de todas las citas y crea la respuesta.
             for appointment in appointments:
                 response.append({
                     'id': appointment.id,
@@ -214,7 +212,6 @@ def get_all_appointments(request):
         except AttributeError as e:
             return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
 
-        # Retorna la respuesta como JSON.
         return JsonResponse(response, safe=False)
 
 

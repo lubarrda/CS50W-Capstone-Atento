@@ -8,7 +8,7 @@ from .views import (register_request, login_request, doctor_form, patient_form,
                     view_patient_profile,
                     add_availability, view_availability, DoctorListView, DoctorCalendarView )
 
-from .api import api_availability, api_create_appointment, api_update_appointment, api_get_appointment, get_all_appointments
+from .api import api_availability, api_create_appointment, api_update_appointment, api_get_appointment, get_all_appointments, api_get_user_type
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/update_appointment/<int:appointment_id>/', api_update_appointment, name='api_update_appointment'),
     path('api/get_appointment/<int:event_id>/', api_get_appointment, name='api_get_appointment'),
     path('api/get_all_appointments/', get_all_appointments, name='get_all_appointments'),
+    path('api/get_user_type/', api_get_user_type, name='api_get_user_type'),
     path('appointments/', TemplateView.as_view(template_name='index.html'), name='appointments')
 
 

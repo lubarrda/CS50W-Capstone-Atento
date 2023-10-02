@@ -40,7 +40,7 @@
               <div class="card-body">
                 <h5 class="card-title">Book an Appointment</h5>
                 <p class="card-text">Find an available doctor and book an appointment.</p>
-                <a href="{% url 'appointments' %}" class="btn btn-primary">View Appointments</a>
+                <a href="{% url 'doctor_list' %}" class="btn btn-primary">Book an Appointment</a>
               </div>
             </div>
           </div>
@@ -49,7 +49,7 @@
               <div class="card-body">
                 <h5 class="card-title">Your Appointments</h5>
                 <p class="card-text">Review your upcoming appointments.</p>
-                <a href="#" class="btn btn-primary">View Appointments</a>
+                <a href="{% url 'appointments' %}" class="btn btn-primary">View Appointments</a>
               </div>
             </div>
           </div>

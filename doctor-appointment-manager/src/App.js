@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-
+import TextField from '@mui/material/TextField';
 
 function getCsrfToken() {
   const cookies = document.cookie.split(';');
@@ -18,36 +18,50 @@ function getCsrfToken() {
 
 function App() {
   const [appointments, setAppointments] = useState([]);
+  const [userType, setUserType] = useState(''); 
+  const [doctorNotes, setDoctorNotes] = useState({}); 
 
   useEffect(() => {
-    
     const csrfToken = getCsrfToken(); 
-
+  
     fetch(`/api/get_all_appointments/`, {
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken, 
       },
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 404) {
+          window.location.href = '/accounts/login/';
+        } else {
+          return response.json();
+      }
+    })
       .then(data => setAppointments(data));
+  
+    fetch('/api/get_user_type/', {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+    })
+      .then(response => response.json())
+      .then(data => setUserType(data.userType));
   }, []);
 
-  const handleStatusChange = (id, newStatus) => {
-    
+  const handleStatusChange = (id, newStatus, notes) => {
     const csrfToken = getCsrfToken(); 
-
     fetch(`/api/update_appointment/${id}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken,
       },
-      body: JSON.stringify({ status: newStatus }),
+      body: JSON.stringify({ status: newStatus, doctor_notes: notes }),
     })
       .then(() => {
         setAppointments(appointments.map(appt =>
-          appt.id === id ? { ...appt, status: newStatus } : appt
+          appt.id === id ? { ...appt, status: newStatus, doctor_notes: notes } : appt 
         ));
       });
   };
@@ -66,12 +80,30 @@ function App() {
             <Typography variant="body1" gutterBottom>
               Notes: {appt.patient_notes}
             </Typography>
-            <Button variant="contained" color="primary" onClick={() => handleStatusChange(appt.id, 'ACCEPTED')}>
-              Accept
-            </Button>
-            <Button variant="contained" color="secondary" onClick={() => handleStatusChange(appt.id, 'REJECTED')} style={{ marginLeft: '10px' }}>
-              Reject
-            </Button>
+            {/* Campo para notas del doctor */}
+            {userType === 'DOCTOR' && (
+              <>
+                <TextField
+                  label="Doctor Notes"
+                  variant="outlined"
+                  fullWidth
+                  value={doctorNotes[appt.id] || ''}
+                  onChange={(e) => setDoctorNotes({ ...doctorNotes, [appt.id]: e.target.value })}
+                  style={{ marginBottom: '10px' }}
+                />
+                <Button variant="contained" color="primary" onClick={() => handleStatusChange(appt.id, 'ACCEPTED', doctorNotes[appt.id])}>
+                  Accept
+                </Button>
+                <Button variant="contained" color="secondary" onClick={() => handleStatusChange(appt.id, 'REJECTED', doctorNotes[appt.id])} style={{ marginLeft: '10px' }}>
+                  Reject
+                </Button>
+              </>
+            )}
+            {userType === 'PATIENT' && (
+              <Button variant="contained" color="secondary" onClick={() => handleStatusChange(appt.id, 'CANCELLED')} style={{ marginLeft: '10px' }}>
+                Cancel
+              </Button>
+            )}
           </CardContent>
         </Card>
       ))}
@@ -86,8 +118,14 @@ function App() {
               Date: {new Date(appt.start).toLocaleString()}
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Notes: {appt.patient_notes}
+              Patient Notes: {appt.patient_notes}
             </Typography>
+            <Typography variant="body1" gutterBottom>
+              Doctor Notes: {appt.doctor_notes}
+            </Typography>
+              <Button variant="contained" color="secondary" onClick={() => handleStatusChange(appt.id, 'CANCELLED')} style={{ marginLeft: '10px' }}>
+                Cancel
+              </Button>
           </CardContent>
         </Card>
       ))}

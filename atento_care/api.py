@@ -210,3 +210,11 @@ def get_all_appointments(request):
 
     else:
         return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
+
+@login_required
+def api_get_user_type(request):
+    if request.method == 'GET':
+        user_type = 'DOCTOR' if hasattr(request.user, 'doctor') else 'PATIENT'
+        return JsonResponse({'userType': user_type})
+    else:
+        return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)

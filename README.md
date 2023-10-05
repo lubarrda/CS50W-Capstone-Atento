@@ -20,7 +20,7 @@ This is a React-based module that offers an enhanced user experience:
 
 ## Distinctiveness and Complexity
 
-Within this hub, the `atento_care` app seamlessly bridges the frontend and backend, underscoring the project's multifaceted complexity through meticulous data synchronization and robust integrity. Nested within `atento_care` is the `doctor-appointment-manager` module, crafted with React, which further augments user interactivity and efficiency. The project adheres to the best practices of software development, ensuring scalability and reliability. The `atento_care` app emerges as a specialized healthcare solution:
+Within Atento, the `atento_care` app seamlessly bridges the frontend and backend, underscoring the project's multifaceted complexity through meticulous data synchronization and robust integrity. Nested within `atento_care` is the `doctor-appointment-manager` module, crafted with React, which further augments user interactivity and efficiency. The project adheres to the best practices of software development, ensuring scalability and reliability. The `atento_care` app emerges as a specialized healthcare solution:
 
 - **Doctors**:
   - Through `atento_care`, doctors can effortlessly set and manage their availability.

@@ -56,7 +56,7 @@ def api_availability(request, doctor_id=None):
                 color = '#FFBF00'
                 title = 'REQUESTED'
             elif sa.status == 'ACCEPTED':
-                color = 'pink'
+                color = 'blue'
                 title = 'ACCEPTED'
 
             start_datetime = timezone.make_aware(datetime.combine(sa.date, sa.start_time.time()))

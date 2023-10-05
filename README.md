@@ -2,6 +2,22 @@
 
 Welcome to Atento, your centralized hub crafted for optimizing the appointment scheduling process. Anchored by robust technologies like Django and React, Atento provides a streamlined platform for efficient appointment management.
 
+## Key Components
+
+### Atento Core (`/atento`)
+This directory contains the primary settings and configurations for the Atento project.
+
+### Atento Care App (`/atento_care`)
+The `atento_care` app is a specialized healthcare solution within Atento. Key components include:
+- **Backend Logic (`api.py`)**: Manages data related to doctor availability and scheduled appointments.
+- **Database Models (`models.py`)**: Defines the database structure for doctors, patients, availability, and appointments.
+- **Frontend Templates**: Provides the frontend interface. Key templates include `doctor_calendar.html`, `add_availability.html`, and other profile and form templates.
+
+### Doctor Appointment Manager (`/doctor-appointment-manager`)
+This is a React-based module that offers an enhanced user experience:
+- **Main React Component (`src/App.js`)**: Fetches and displays appointments, allowing users to change appointment statuses.
+
+
 ## Distinctiveness and Complexity
 
 Within this hub, the `atento_care` app seamlessly bridges the frontend and backend, underscoring the project's multifaceted complexity through meticulous data synchronization and robust integrity. Nested within `atento_care` is the `doctor-appointment-manager` module, crafted with React, which further augments user interactivity and efficiency. The project adheres to the best practices of software development, ensuring scalability and reliability. The `atento_care` app emerges as a specialized healthcare solution:
@@ -22,8 +38,34 @@ In essence, Atento bridges the communication gap in the healthcare domain. Every
 
 ## File Structure and Components
 
-### `atento_care`
+### Atento Core (`/atento`)
+This directory contains the primary settings and configurations for the Atento project.
+
+### `(/atento/atento_care)`
 This is the core Django application managing the backend logic, database models, and main user interactions.
+
+### (`views.py`)
+
+Within `views.py`, the views handling the logic and interaction between the frontend and backend are defined:
+
+*Registration and Authentication:*
+- **`register_request`**: Allows users to register on Atento.
+- **`login_request`**: Authenticates users and lets them log in.
+- **`logout_request`**: Logs out an authenticated user.
+
+ *User Profiles:*
+- **`doctor_form`** and **`patient_form`**: Allow doctor and patient type users respectively to fill and save their details.
+- **`update_doctor_profile`** and **`update_patient_profile`**: Allow users to update their profile information.
+- **`my_account`**: Displays the profile of the authenticated user, be it a doctor or a patient.
+- **`view_doctor_profile`** and **`view_patient_profile`**: Allow other users to view the profile of a specific doctor or patient.
+
+*Doctor Availability:*
+- **`add_availability`**: Enables doctors to add their availability.
+- **`view_availability`**: Displays and manages doctor's availability.
+
+*Doctor Listing and Calendar:*
+- **`DoctorListView`**: Lists all registered doctors.
+- **`DoctorCalendarView`**: Displays the calendar and availability of a specific doctor.
 
 #### `api.py`
 Manages the backend logic for fetching and handling data related to doctor availability and scheduled appointments. It interacts with the database models to ensure real-time updates of availability slots and appointment scheduling.

@@ -214,7 +214,6 @@ def get_all_appointments(request):
 
         return JsonResponse(response, safe=False)
 
-
 @login_required
 def api_get_user_type(request):
     if request.method == 'GET':

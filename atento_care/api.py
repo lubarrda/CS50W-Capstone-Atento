@@ -50,8 +50,8 @@ def api_availability(request, doctor_id=None):
                     })
 
         for sa in scheduled_appointments:
-            color = ''
-            title = ''
+            if sa.status in ['CANCELLED', 'REJECTED']:
+                continue
             if sa.status == 'REQUESTED':
                 color = '#FFBF00'
                 title = 'REQUESTED'
@@ -141,7 +141,8 @@ def api_update_appointment(request, appointment_id):
             doctor_notes = data.get('doctor_notes')
 
             if status in ['REJECTED', 'CANCELLED']:
-                appointment.delete()
+                appointment.status = status
+                appointment.save()
             else:
                 # Update the appointment object
                 appointment.status = status

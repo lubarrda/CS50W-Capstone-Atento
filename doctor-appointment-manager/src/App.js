@@ -82,13 +82,13 @@ function App() {
               Date: {new Date(appt.start).toLocaleString()}
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Patient: {appt.patient_username} 
+              Patient: {appt.patient_username}
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Doctor: {appt.doctor_username}
+              Doctor: {appt.doctor_username}
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Patient Notes: {appt.patient_notes}
+              Patient Notes: {appt.patient_notes}
             </Typography>
             {/* Campo para notas del doctor */}
             {userType === 'DOCTOR' && (
@@ -117,7 +117,7 @@ function App() {
           </CardContent>
         </Card>
       ))}
-      
+
       <Typography variant="h3" gutterBottom>
         Accepted Appointments
       </Typography>
@@ -133,9 +133,31 @@ function App() {
             <Typography variant="body1" gutterBottom>
               Doctor Notes: {appt.doctor_notes}
             </Typography>
-              <Button variant="contained" color="secondary" onClick={() => handleStatusChange(appt.id, 'CANCELLED')} style={{ marginLeft: '10px' }}>
-                Cancel
-              </Button>
+            <Button variant="contained" color="secondary" onClick={() => handleStatusChange(appt.id, 'CANCELLED')} style={{ marginLeft: '10px' }}>
+              Cancel
+            </Button>
+          </CardContent>
+        </Card>
+      ))}
+
+      <Typography variant="h3" gutterBottom>
+        Cancelled Appointments
+      </Typography>
+      {appointments.filter(appt => appt.status === 'CANCELLED').map(appt => (
+        <Card key={appt.id} variant="outlined" style={{ marginBottom: '20px' }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Date: {new Date(appt.start).toLocaleString()}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Patient: {appt.patient_username}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Doctor: {appt.doctor_username}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Notes: {appt.patient_notes}
+            </Typography>
           </CardContent>
         </Card>
       ))}
@@ -150,11 +172,19 @@ function App() {
               Date: {new Date(appt.start).toLocaleString()}
             </Typography>
             <Typography variant="body1" gutterBottom>
+              Patient: {appt.patient_username}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Doctor: {appt.doctor_username}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
               Notes: {appt.patient_notes}
             </Typography>
           </CardContent>
         </Card>
       ))}
+
+
     </div>
   );
 }

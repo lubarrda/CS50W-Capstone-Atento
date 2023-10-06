@@ -41,7 +41,7 @@ In essence, Atento bridges the communication gap in the healthcare domain. Every
 ### Atento Core (`/atento`)
 This directory contains the primary settings and configurations for the Atento project.
 
-### `(/atento/atento_care)`
+### `(/atento_care)`
 This is the core Django application managing the backend logic, database models, and main user interactions.
 
 ### (`views.py`)

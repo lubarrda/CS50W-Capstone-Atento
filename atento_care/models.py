@@ -63,4 +63,4 @@ class ScheduledAppointment(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='REQUESTED')
     doctor_notes = models.TextField(null=True, blank=True) 
     patient_notes = models.TextField(null=True, blank=True)
-
+    

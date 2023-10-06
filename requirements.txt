@@ -8,6 +8,7 @@ charset-normalizer==3.2.0
 cryptography==41.0.3
 distlib==0.3.7
 Django==4.1.4
+django-cors-headers==3.5.0
 django-widget-tweaks==1.4.12
 filelock==3.12.4
 idna==3.4
@@ -28,3 +29,4 @@ submit50==3.1.1
 termcolor==1.1.0
 urllib3==2.0.4
 virtualenv==20.24.5
+

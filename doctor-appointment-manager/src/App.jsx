@@ -40,7 +40,7 @@ function App() {
     })
       .then(data => {
         setAppointments(data);
-        console.log(data);  // Añadir esta línea para verificar los datos
+        console.log(data); 
       });
   
     fetch('/api/get_user_type/', {
@@ -69,6 +69,16 @@ function App() {
         ));
       });
   };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+        timeZone: 'UTC',
+        dateStyle: 'full', 
+        timeStyle: 'short'
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+
 
   return (
     <div>
@@ -79,7 +89,7 @@ function App() {
         <Card key={appt.id} variant="outlined" style={{ marginBottom: '20px' }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Date: {new Date(appt.start).toLocaleString()}
+              Date: {formatDate(appt.start)}
             </Typography>
             <Typography variant="body1" gutterBottom>
               Patient: {appt.patient_username}
@@ -90,7 +100,7 @@ function App() {
             <Typography variant="body1" gutterBottom>
               Patient Notes: {appt.patient_notes}
             </Typography>
-            {/* Campo para notas del doctor */}
+            {/* Field for doctor notes */}
             {userType === 'DOCTOR' && (
               <>
                 <TextField
@@ -125,7 +135,7 @@ function App() {
         <Card key={appt.id} variant="outlined" style={{ marginBottom: '20px' }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Date: {new Date(appt.start).toLocaleString()}
+              Date: {formatDate(appt.start)}
             </Typography>
             <Typography variant="body1" gutterBottom>
               Patient Notes: {appt.patient_notes}
@@ -147,7 +157,7 @@ function App() {
         <Card key={appt.id} variant="outlined" style={{ marginBottom: '20px' }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Date: {new Date(appt.start).toLocaleString()}
+              Date: {formatDate(appt.start)}
             </Typography>
             <Typography variant="body1" gutterBottom>
               Patient: {appt.patient_username}
@@ -169,7 +179,7 @@ function App() {
         <Card key={appt.id} variant="outlined" style={{ marginBottom: '20px' }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Date: {new Date(appt.start).toLocaleString()}
+              Date: {formatDate(appt.start)}
             </Typography>
             <Typography variant="body1" gutterBottom>
               Patient: {appt.patient_username}

@@ -1,13 +1,13 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from .models import DoctorAvailability, ScheduledAppointment, Doctor, Patient
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse, HttpResponseBadRequest
 from django.db import transaction
 import json
+
 
 
 @login_required  
@@ -30,7 +30,9 @@ def api_availability(request, doctor_id=None):
                     end_datetime = timezone.make_aware(datetime.combine(day.date(), a.end_time))
 
                     # Checking if the time slot is already booked
-                    is_booked = scheduled_appointments.filter(
+                    is_booked = scheduled_appointments.exclude(
+                        status__in=['REJECTED', 'CANCELLED']
+                    ).filter(
                         start_time__gte=start_datetime, 
                         end_time__lte=end_datetime
                     ).exists()
@@ -184,7 +186,6 @@ def api_get_appointment(request, event_id):
 
     else:
         return JsonResponse({'status': 'fail', 'error': 'Invalid request method'}, status=405)
-
 
 @csrf_exempt
 def get_all_appointments(request):

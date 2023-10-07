@@ -1,20 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
 from django.views.generic import ListView, DetailView
-from .forms import CustomUserCreationForm, DoctorForm, PatientForm, DoctorUpdateForm, PatientUpdateForm, DoctorAvailabilityForm # Importa los nuevos formularios.
+from .forms import (
+    CustomUserCreationForm, DoctorForm, PatientForm, 
+    DoctorUpdateForm, PatientUpdateForm, DoctorAvailabilityForm
+)
 from .models import CustomUser, Doctor, Patient, DoctorAvailability, ScheduledAppointment
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm  # Login
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
-from django.utils.timezone import get_current_timezone
 from datetime import datetime, timedelta
-from django.http import JsonResponse, HttpResponseBadRequest
-import json
-from django.utils.timezone import utc
+
 
 
 def register_request(request):
@@ -53,7 +52,7 @@ def logout_request(request):
     messages.info(request, "You have successfully logged out. See you soon!") 
     return redirect("home")
 
-# Aquí se han creado vistas para los formularios Doctor y Patient.
+# Views for  Doctor and Patient forms.
 def doctor_form(request):
     if request.method == 'POST':
         form = DoctorForm(request.POST)
@@ -146,8 +145,7 @@ def add_availability(request):
 
 @login_required
 def view_availability(request):
-    availability = DoctorAvailability.objects.filter(doctor=request.user.doctor)
-    
+    availability = DoctorAvailability.objects.filter(doctor=request.user.doctor)  
     appointments = ScheduledAppointment.objects.filter(doctor=request.user.doctor)
     
     events = []
@@ -185,7 +183,6 @@ def view_availability(request):
     return render(request, "atento_care/view_availability.html", {"availability_forms": forms, "events": events})
 
 
-
 class PatientRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -200,5 +197,4 @@ class DoctorListView(PatientRequiredMixin, ListView):
 class DoctorCalendarView(PatientRequiredMixin, DetailView):
     model = Doctor
     template_name = 'atento_care/doctor_calendar.html'
-
 

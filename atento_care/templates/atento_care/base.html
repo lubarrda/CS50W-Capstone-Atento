@@ -10,7 +10,6 @@
 <body>
     <header>
         <nav>
-            <!-- Aquí van los enlaces a otras páginas -->
             <a href="{% url 'home' %}">Home</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'my_account' %}">My account</a>
@@ -27,11 +26,9 @@
         <p class="{{ message.tags }}">{{ message }}</p>
     {% endfor %}
     {% block content %}
-        <!-- El contenido específico de cada página irá aquí -->
         {% endblock content %}
     </main>
     <footer>
-        <!-- Aquí va la información del pie de página -->
     </footer>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

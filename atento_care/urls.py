@@ -11,7 +11,7 @@ from .views import (register_request, login_request, doctor_form, patient_form,
 from .api import api_availability, api_create_appointment, api_update_appointment, api_get_appointment, get_all_appointments, api_get_user_type
 
 urlpatterns = [
-    path('', home_view, name='home'),
+    path('home', home_view, name='home'),
     path('register/', register_request, name='register'),
     path('login/', login_request, name='login'),
     path('logout/', logout_request, name='logout'),

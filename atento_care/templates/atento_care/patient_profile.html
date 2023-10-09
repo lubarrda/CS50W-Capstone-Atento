@@ -1,7 +1,20 @@
 {% extends 'atento_care/base.html' %}
 
 {% block content %}
-    <h2>Patient Profile</h2>
-    <p>Birth year: {{ user.patient.birth_year }}</p>
-    <a href="{% url 'update_patient_profile' %}" class="btn btn-primary">Edit</a>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Patient Profile</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-4">Details</h4>
+                    <p><strong>Birth year:</strong> {{ user.patient.birth_year }}</p>
+                    <a href="{% url 'update_patient_profile' %}" class="btn btn-primary mt-3">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

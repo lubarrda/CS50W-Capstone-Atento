@@ -94,7 +94,7 @@ function getCsrfToken() {
         <Accordion key={appt.id}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography variant="h6">
-                    Date: {formatDate(appt.start)} | Patient Notes: {appt.patient_notes}
+                    Date: {formatDate(appt.start)} | {filter === 'ALL' ? 'Status: ' + appt.status : 'Patient Notes: ' + appt.patient_notes}
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>

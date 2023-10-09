@@ -1,8 +1,0 @@
-{% extends 'atento_care/base.html' %}
-
-{% block content %}
-  <h2>Profile of Dr. {{ user.doctor.name }}</h2>
-  <p>Specialization: {{ user.doctor.specialization }}</p>
-  <p>Years of Experience: {{ user.doctor.years_of_experience }}</p>
-  <a href="{% url 'update_doctor_profile' %}">Update Profile</a>
-{% endblock %}

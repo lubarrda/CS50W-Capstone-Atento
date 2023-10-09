@@ -1,0 +1,25 @@
+nav {
+    background-color: #3f51b5;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav div a {
+    color: white;
+    text-decoration: none;
+}
+
+nav div a:not(.no-hover-effect):hover {
+    text-decoration: underline white;
+    cursor: pointer;  
+}
+
+
+.no-hover-effect {
+    font-size: 1.5em;
+    font-weight: 500;
+    color: white;
+    text-decoration: none;
+}

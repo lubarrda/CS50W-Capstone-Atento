@@ -7,7 +7,13 @@ from .models import CustomUser, Doctor, Patient, DoctorAvailability, ScheduledAp
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = UserCreationForm.Meta.fields + ('user_type',) # Añade 'user_type' a los campos del formulario.
+        fields = UserCreationForm.Meta.fields + ('user_type',)
+
+    def clean_user_type(self):
+        user_type = self.cleaned_data.get("user_type")
+        if user_type == "" or user_type == "Please select a role":
+            raise forms.ValidationError("Please select a valid user role.")
+        return user_type
 
 # Aquí se han creado formularios de perfil para Doctor y Paciente.
 class DoctorForm(forms.ModelForm):

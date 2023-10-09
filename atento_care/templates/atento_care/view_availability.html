@@ -2,6 +2,7 @@
 
 {% block content %}
     <h2>My Availability</h2>
+
     <table class="table table-striped table-bordered table-hover">
         <thead>
             <tr>
@@ -42,4 +43,7 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="mb-3">
+        <a href="{% url 'add_availability' %}" class="btn btn-primary">Add Availability</a>
+    </div>
 {% endblock content %}

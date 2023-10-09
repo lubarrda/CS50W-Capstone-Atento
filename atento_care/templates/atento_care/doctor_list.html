@@ -10,7 +10,6 @@
         {% for doctor in object_list %}
 <div class="card my-2">
   <div class="card-body">
-    <p>Doctor ID: {{ doctor.pk }}</p>
     {% if doctor.doctoravailability_set.exists %}
     <h5 class="card-title">
       <a href="{% url 'doctor_calendar' doctor.pk %}" 

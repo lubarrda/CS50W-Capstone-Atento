@@ -1,10 +1,29 @@
 {% extends 'atento_care/base.html' %}
 
 {% block content %}
-  <h2>Doctor data</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ doctor_form.as_p }}
-    <button type="submit">Sign Up</button>
-  </form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Doctor Data</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in doctor_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" class="form-control" id="{{ field.id_for_label }}" name="{{ field.name }}" value="{{ field.value }}" {% if field.field.required %} required {% endif %}>
+                        </div>
+                        {% endfor %}
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,39 +7,30 @@
     <title>Atento</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body>
-    <style>
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.1);  /* Añade un ligero efecto de fondo al pasar el mouse */
-            cursor: pointer;  /* Cambia el cursor a una mano */
-        }
-    </style>
+    
     <header>
-        <nav
-            style="background-color: #3f51b5; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 1.5em; font-weight: 500;">Atento Care</span>
+        <nav>
+            <a href="{% url 'home' %}" class="no-hover-effect">Atento Care</a>
+            
             <div>
-                <a href="{% url 'home' %}"
-                    style="color: white; margin-right: 15px; text-decoration: none; padding: 5px 10px;">Home</a>
+                <a href="{% url 'home' %}">Home</a>
                 {% if user.is_authenticated %}
-                <a href="{% url 'my_account' %}"
-                    style="color: white; margin-right: 15px; text-decoration: none; padding: 5px 10px;">My account</a>
-                <a href="{% url 'logout' %}"
-                    style="color: white; margin-right: 15px; text-decoration: none; padding: 5px 10px;">Logout</a>
+                    <a href="{% url 'my_account' %}">My account</a>
+                    <a href="{% url 'logout' %}">Logout</a>
                 {% else %}
-                <a href="{% url 'register' %}"
-                    style="color: white; margin-right: 15px; text-decoration: none; padding: 5px 10px;">Register</a>
-                <a href="{% url 'login' %}" style="color: white; text-decoration: none; padding: 5px 10px;">Login</a>
+                    <a href="{% url 'register' %}">Register</a>
+                    <a href="{% url 'login' %}">Login</a>
                 {% endif %}
             </div>
         </nav>
-    </header>
+    </header>    
     <main>
-<main>
     {% for message in messages %}
         <p class="{{ message.tags }}">{{ message }}</p>
     {% endfor %}

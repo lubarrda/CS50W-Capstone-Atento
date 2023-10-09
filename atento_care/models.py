@@ -2,21 +2,22 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
 
-
 # User types
 class UserType(models.TextChoices):
+    CHOOSE_A_TYPE = '', _('Please select a role')
     DOCTOR = 'DOCTOR', _('Doctor')
     PATIENT = 'PATIENT', _('Patient')
 
 # Custom User model extending from AbstractUser to add user type
 class CustomUser(AbstractUser):
-    user_type = models.CharField(max_length=50, choices=UserType.choices, default=UserType.PATIENT)
+    user_type = models.CharField(max_length=50, choices=UserType.choices, default=UserType.CHOOSE_A_TYPE)
 
 # Doctor model with a one-to-one relation with a User
 class Doctor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     years_of_experience = models.IntegerField()
     specialty = models.CharField(max_length=100)
+
 
 # Patient model with a one-to-one relation with a User
 class Patient(models.Model):

@@ -3,14 +3,14 @@
 {% block content %}
 <div class="container py-5">
   {% if user.is_authenticated %}
-    <h2 class="mb-3">Welcome back, {% if user.user_type == 'DOCTOR' %}Dr.{{ else }}{% endif %} {{ request.user.username }}!</h2>
+    <h2 class="mb-3 text-center">Welcome back, {% if user.user_type == 'DOCTOR' %}Dr.{{ else }}{% endif %} {{ request.user.username }}!</h2>
     <div class="row">
       {% if user.user_type == 'DOCTOR' %}
           <div class="col-md-4">
             <a href="{% url 'add_availability' %}" class="card-link">
             <div class="card card-hover">
                 <div class="card-body">
-                    <h5 class="card-title">Set Your Availability <i class="fa-regular fa-calendar-plus" id="homeicon"></i></h5> 
+                    <h5 class="card-title">Set Your Availability <i class="fa-solid fa-calendar-plus" id="homeicon"></i></h5> 
                     <p class="card-text">Let patients know when you're available for appointments.</p>
                 </div>
             </div>
@@ -37,48 +37,53 @@
             </a>
           </div>
         {% else %}
+        <div class="row justify-content-center">
           <div class="col-md-4">
-            <div class="card card-hover">
-              <div class="card-body">
-                <h5 class="card-title">Book an Appointment</h5>
-                <p class="card-text">Find an available doctor and book an appointment.</p>
-                <a href="{% url 'doctor_list' %}" class="btn btn-primary">Book an Appointment</a>
+              <a href="{% url 'doctor_list' %}" class="card-link">
+              <div class="card card-hover">
+                  <div class="card-body">
+                      <h5 class="card-title">Book an Appointment <i class="fa-solid fa-calendar-plus" id="homeicon"></i></h5>
+                      <p class="card-text">Find an available doctor and book an appointment.</p>
+                  </div>
               </div>
-            </div>
           </div>
           <div class="col-md-4">
-            <div class="card card-hover">
-              <div class="card-body">
-                <h5 class="card-title">Your Appointments</h5>
-                <p class="card-text">Review your upcoming appointments.</p>
-                <a href="{% url 'appointments' %}" class="btn btn-primary">View Appointments</a>
+              <a href="{% url 'appointments' %}" class="card-link">
+              <div class="card card-hover">
+                  <div class="card-body">
+                      <h5 class="card-title">Your Appointments <i class="fa-solid fa-suitcase-medical" id="homeicon"></i></h5> 
+                      <p class="card-text">Review your upcoming appointments.</p>
+                  </div>
               </div>
-            </div>
           </div>
+      </div>
+      
         {% endif %}
       </div>
     {% else %}
-      <h2 class="mb-3">Welcome to Atento Care!</h2>
-      <div class="row">
-        <div class="col-md-6">
-          <a href="{% url 'login' %}" class="card-link">
-          <div class="card card-hover">
-            <div class="card-body">
-              <h5 class="card-title">Login <i class="fa-solid fa-laptop-medical" id="homeicon" ></i> </h5>
-              <p class="card-text">Already have an account? Login to access your appointments.</p>
-            </div>
-          </div>
+<h2 class="mb-3 text-center">Welcome to Atento Care!</h2>
+      <div class="row justify-content-center">
+        <div class="col-md-4"> <!-- Cambia col-md-6 a col-md-4 para hacer las columnas un poco más estrechas -->
+            <a href="{% url 'login' %}" class="card-link">
+                <div class="card card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title">Login <i class="fa-solid fa-laptop-medical" id="homeicon" ></i> </h5>
+                        <p class="card-text">Already have an account? Login to access your appointments.</p>
+                    </div>
+                </div>
+            </a>
         </div>
-        <div class="col-md-6">
-          <a href="{% url 'register' %}" class="card-link">
-          <div class="card card-hover">
-            <div class="card-body">
-              <h5 class="card-title">Register <i class="fa-solid fa-user-plus" id="homeicon"></i></h5> </h5>
-              <p class="card-text">Don't have an account? Register to start booking appointments.</p>
-            </div>
-          </div>
+        <div class="col-md-4"> <!-- Cambia col-md-6 a col-md-4 para hacer las columnas un poco más estrechas -->
+            <a href="{% url 'register' %}" class="card-link">
+                <div class="card card-hover">
+                    <div class="card-body">
+                        <h5 class="card-title">Register <i class="fa-solid fa-user-plus" id="homeicon"></i></h5> </h5>
+                        <p class="card-text">Don't have an account? Register to start booking appointments.</p>
+                    </div>
+                </div>
+            </a>
         </div>
-      </div>
+    </div>
     {% endif %}
   </div>
 {% endblock %}

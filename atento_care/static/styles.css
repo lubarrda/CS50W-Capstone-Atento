@@ -12,7 +12,7 @@ main {
 
 /* Cambio del color de los enlaces para que sean visibles contra el fondo oscuro */
 a {
-    color: #3f51b5;          /* Color azul para los enlaces */
+    color: #3e56db;
 }
 
 a:hover {
@@ -102,7 +102,7 @@ nav div a:hover i {
 
 /* Establecer el color del ícono antes del hover */
 #homeicon {
-    color: #3e56db;
+    color: #348ce4;
 }
 
 /* Cambiar el color de fondo del cuerpo de la tarjeta al hacer hover sobre la tarjeta completa */
@@ -178,7 +178,7 @@ nav div a:hover i {
 }
 
 #calendar .fc-event {
-    background-color: #3f51b5; /* Color azul para los eventos en el calendario */
+    background-color: black; /* Color azul para los eventos en el calendario */
     border: none; /* Quitar el borde predeterminado de los eventos */
 }
 
@@ -187,6 +187,18 @@ nav div a:hover i {
 }
 
 #calendar .fc-day-today {
-    background-color: #555; /* Un color ligeramente diferente para el día actual */
+    background-color: rgba(16, 25, 27, 0.918); /* Un color ligeramente diferente para el día actual */
 }
 
+
+.card-header {
+    background-color: #3f51b5; /* Fondo azul oscuro */
+    color: white; /* Texto blanco */
+    border: 3px solid black;
+    border-bottom: 0.1px solid darkslategrey;
+}
+
+.card-title {
+    font-size: 1.5em; /* Aumentar el tamaño de fuente del título */
+    
+}

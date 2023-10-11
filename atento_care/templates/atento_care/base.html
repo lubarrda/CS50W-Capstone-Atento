@@ -22,8 +22,8 @@
             <a href="{% url 'home' %}" class="no-hover-effect">Atento Care <i class="fa-solid fa-staff-snake"></i> </a>
             
             <div>
-                <a href="{% url 'home' %}"><i class="fa-solid fa-hospital fa-lg"></i></a>
                 {% if user.is_authenticated %}
+                    <a href="{% url 'appointments' %}"><i class="fa-solid fa-hospital fa-lg"></i></a>
                     <a href="{% url 'my_account' %}"><i class="fa-solid fa-hospital-user fa-lg"></i></a>
                     <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i></a>
                 {% else %}

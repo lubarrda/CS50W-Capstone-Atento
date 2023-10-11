@@ -41,7 +41,7 @@ def login_request(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, "Login successful. Welcome back.")
+                messages.success(request, "Login successful.")
                 return redirect("home")
     else:
         form = AuthenticationForm()

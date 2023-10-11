@@ -6,26 +6,27 @@
 <div class="container my-4">
   <!-- Doctor Information -->
   <div class="card mb-4">
-    <div class="card-header">
-      <h2 class="card-title">Doctor Profile</h2>
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Doctor Profile <i class="fa-solid fa-user-doctor"></i> </h2>
     </div>
     <div class="card-body">
-      <p class="card-text"><strong>Years of Experience:</strong> {{ user.doctor.years_of_experience }}</p>
-      <p class="card-text"><strong>Specialty:</strong> {{ user.doctor.specialty }}</p>
-      <a href="{% url 'update_doctor_profile' %}" class="btn btn-primary">Edit</a>
+      <p><strong>Years of Experience:</strong> {{ user.doctor.years_of_experience }}</p>
+      <p><strong>Specialty:</strong> {{ user.doctor.specialty }}</p>
+      <a href="{% url 'update_doctor_profile' %}" class="btn btn-success" id="editicon" >Edit</a>
     </div>
   </div>
 
   <!-- Calendar -->
   <div class="card">
-    <div class="card-header">
-      <h5 class="card-title">My Availability</h5>
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">My Availability <i class="fa-solid fa-calendar-days"></i> </h5>
     </div>
     <div class="card-body">
       <div id='calendar'></div>
     </div>
   </div>
 </div>
+
 
 <!-- Importing necessary libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
@@ -34,7 +35,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
 
 
-<!-- Load your JavaScript file -->
 <script src="{% static 'js/doctor_calendar.js' %}"></script>
 
 <!-- Generate the API URL and initialize the calendar -->
@@ -48,7 +48,7 @@
   });
   </script>
 
-// <!-- Doctor Modal -->
+ <!-- Doctor Modal -->
 <div class="modal fade" id="doctorModal" tabindex="-1" role="dialog" aria-labelledby="doctorModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

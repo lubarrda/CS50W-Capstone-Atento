@@ -47,9 +47,9 @@ class DoctorAvailabilityForm(forms.ModelForm):
         (7, 'Sunday'),
     ]
 
-    day_of_week = forms.ChoiceField(choices=DAYS_OF_WEEK, label="Day of the week", help_text="Select the day of the week you are available.")
-    start_time = forms.TimeField(widget=forms.TimeInput(format='%H:%M'), label="Start Time", help_text="Enter the start time of your availability in 24-hour format (HH:MM).")
-    end_time = forms.TimeField(widget=forms.TimeInput(format='%H:%M'), label="End Time", help_text="Enter the end time of your availability in 24-hour format (HH:MM).")
+    day_of_week = forms.ChoiceField(choices=DAYS_OF_WEEK, label="Day of the week:", help_text="Select the day of the week you are available.")
+    start_time = forms.TimeField(widget=forms.TimeInput(format='%H:%M'), label="Start Time:", help_text="Enter the start time of your availability in 24-hour format (HH:MM).")
+    end_time = forms.TimeField(widget=forms.TimeInput(format='%H:%M'), label="End Time:", help_text="Enter the end time of your availability in 24-hour format (HH:MM).")
 
     def __init__(self, *args, **kwargs):
         self.doctor = kwargs.pop('doctor', None)

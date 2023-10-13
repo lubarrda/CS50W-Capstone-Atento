@@ -9,8 +9,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import './App.css';
+
 
 
 // Function to retrieve CSRF token for security during API calls
@@ -99,10 +99,10 @@ function getCsrfToken() {
             </AccordionSummary>
             <AccordionDetails>
                 <Typography variant="body1" gutterBottom>
-                    Patient Username: {appt.patient_username}
+                    Patient: {appt.patient_username}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Doctor Username: {appt.doctor_username}
+                    Doctor: {appt.doctor_username}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                     Patient Notes: {appt.patient_notes}
@@ -157,77 +157,81 @@ function getCsrfToken() {
     
 
     return (
-      <div>
-        {/* Navegación */}
-        <AppBar position="static" color="primary">
-    <Toolbar>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
-            Doctor Appointment Manager
-        </Typography>
-        <a href="/home" style={{ marginRight: '15px', textDecoration: 'none', color: 'white' }}>Home</a>
-        {userType ? (
-            <>
-                <a href="/my_account" style={{ marginRight: '15px', textDecoration: 'none', color: 'white' }}>My account</a>
-                <a href="/logout" style={{ marginRight: '15px', textDecoration: 'none', color: 'white' }}>Logout</a>
-            </>
-        ) : (
-            <>
-                <a href="/register" style={{ marginRight: '15px', textDecoration: 'none', color: 'white' }}>Register</a>
-                <a href="/login" style={{ textDecoration: 'none', color: 'white' }}>Login</a>
-            </>
-        )}
-    </Toolbar>
-</AppBar>
-
-
-      {/* Filtro */}
-        <div style={{ margin: '20px 0' }}>
-          <Typography variant="h6" gutterBottom>
+      <div className="app-container">
+  
+          {/* Nav bar */}
+          <AppBar position="static" className="navbar">
+              <Toolbar>
+                  <Typography variant="h6" style={{ flexGrow: 1 }}>
+                      Doctor Appointment Manager
+                  </Typography>
+                  <div>
+                      <a href="/home">Home</a>
+                      {userType ? (
+                          <>
+                              <a href="/my_account">My account</a>
+                              <a href="/logout">Logout</a>
+                          </>
+                      ) : (
+                          <>
+                              <a href="/register">Register</a>
+                              <a href="/login">Login</a>
+                          </>
+                      )}
+                  </div>
+              </Toolbar>
+          </AppBar>
+  
+        {/* Filter */}
+        <div className="filter-section">
+          <Typography variant="h6" gutterBottom className="white-text">
             Filter Appointments:
           </Typography>
           <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
             <Button
-              style={filter === 'ALL' ? { backgroundColor: 'darkblue', color: 'white' } : {}}
+              className={filter === 'ALL' ? "active-button" : ""}
               onClick={() => setFilter('ALL')}
             >
               All
             </Button>
             <Button
-              style={filter === 'REQUESTED' ? { backgroundColor: 'darkblue', color: 'white' } : {}}
+              className={filter === 'REQUESTED' ? "active-button" : ""}
               onClick={() => setFilter('REQUESTED')}
             >
               Requested
             </Button>
             <Button
-              style={filter === 'ACCEPTED' ? { backgroundColor: 'darkblue', color: 'white' } : {}}
+              className={filter === 'ACCEPTED' ? "active-button" : ""}
               onClick={() => setFilter('ACCEPTED')}
             >
               Accepted
             </Button>
             <Button
-              style={filter === 'CANCELLED' ? { backgroundColor: 'darkblue', color: 'white' } : {}}
+              className={filter === 'CANCELLED' ? "active-button" : ""}
               onClick={() => setFilter('CANCELLED')}
             >
               Cancelled
             </Button>
             <Button
-              style={filter === 'REJECTED' ? { backgroundColor: 'darkblue', color: 'white' } : {}}
+              className={filter === 'REJECTED' ? "active-button" : ""}
               onClick={() => setFilter('REJECTED')}
             >
               Rejected
             </Button>
           </ButtonGroup>
-
         </div>
 
-      {/* Aquí debes incluir las citas renderizadas */}
-      <Typography variant="h3" gutterBottom>
-         {filterTitle()}
-      </Typography>
-      {renderAppointments()}
-      </div> 
+        {/* Filter title */}
+        <Typography variant="h3" gutterBottom className="white-text">
+          {filterTitle()}
+        </Typography>
 
+        {/* Appointments list */}
+        {renderAppointments()}
+
+      </div>
     );
+  
   }
 
 export default App;

@@ -43,6 +43,9 @@
         $('#appointmentDate').data('end', end_str);
     
         // Display the appointment modal
+        console.log("start_str:", start_str);
+        console.log("end_str:", end_str);
+
         $('#appointmentModal').modal('show');
     }
 
@@ -286,7 +289,12 @@
         console.error('Error initializing calendar:', error);
     }
     
-    $('#confirmAppointment').click(sendAppointmentRequest);    
-      
+        $('#confirmAppointment').click(sendAppointmentRequest);
+
+        $('.close, .btn-secondary').on('click', function () {
+            $('#appointmentModal').modal('hide');
+        });
+
+
 }
 

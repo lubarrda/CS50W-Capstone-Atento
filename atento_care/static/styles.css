@@ -144,7 +144,6 @@ nav div a:hover i {
 
 .availability-form label {
     font-weight: 500; /* Hace que las etiquetas sean un poco más gruesas */
-    color: black; /* Color oscuro para las etiquetas */
     
 }
 
@@ -202,3 +201,84 @@ nav div a:hover i {
     font-size: 1.5em; /* Aumentar el tamaño de fuente del título */
     
 }
+
+/* Estilos para el modal */
+.modal-content {
+    background-color: #444; /* Usamos el mismo fondo que el contenido principal */
+    border: 3px solid black; /* Borde negro para que se destaque */
+    color: white; /* Color de texto blanco */
+}
+
+.modal-header {
+    background-color: #3f51b5; /* Fondo azul oscuro para el encabezado del modal */
+    border-bottom: 2px solid #333; /* Línea divisoria entre el encabezado y el cuerpo del modal */
+}
+
+.modal-footer {
+    background-color: #3f51b5; /* Fondo azul oscuro para el pie del modal */
+    border-top: 2px solid #333; /* Línea divisoria entre el cuerpo y el pie del modal */
+}
+
+.modal-title {
+    color: white; /* Color de texto blanco para el título */
+}
+
+.modal .close {
+    color: white; /* Color de texto blanco para el botón de cerrar */
+}
+
+.modal .close:hover {
+    color: #e0e0e0; /* Color gris claro al pasar el ratón por encima del botón de cerrar */
+}
+
+.modal .btn-primary {
+    background-color: #3f51b5; /* Fondo azul oscuro para el botón principal */
+    border: none; /* Quitar el borde predeterminado */
+}
+
+.modal .btn-primary:hover {
+    background-color: #0f36c3; /* Azul más oscuro al pasar el ratón por encima del botón principal */
+}
+
+.modal .btn-secondary {
+    background-color: #333; /* Fondo oscuro para el botón secundario */
+    border: none; /* Quitar el borde predeterminado */
+}
+
+.modal .btn-secondary:hover {
+    background-color: #282c34; /* Un tono más claro de gris al pasar el ratón por encima del botón secundario */
+}
+
+.modal .form-control {
+    background-color: #333; /* Fondo oscuro para los campos del formulario */
+    color: white; /* Color de texto blanco para los campos del formulario */
+    border: 2px solid #3f51b5; /* Borde azul oscuro para los campos del formulario */
+}
+
+.modal .form-control:focus {
+    border-color: #0f36c3; /* Resaltar con un borde azul más oscuro cuando el campo tiene el foco */
+    box-shadow: none; /* Quitar el resplandor predeterminado alrededor del campo */
+}
+
+/* Estilo para el botón de cierre del modal */
+.modal .close {
+    color: #3f51b5; /* Cambia el color de la "x" a un gris claro */
+    text-shadow: none; /* Quita la sombra del texto */
+    opacity: 0.8; /* Añade una ligera transparencia */
+}
+
+.modal .close:hover {
+    color: red; /* Cambia el color de la "x" a blanco al pasar el ratón por encima */
+    opacity: 1; /* Restablece la opacidad al valor completo al pasar el ratón por encima */
+}
+
+/* Elimina el fondo predeterminado del botón de cierre */
+.modal .close:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+
+
+
+

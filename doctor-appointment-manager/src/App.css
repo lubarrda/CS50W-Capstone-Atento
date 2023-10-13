@@ -2,16 +2,6 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
 .App-header {
   background-color: #282c34;
@@ -28,11 +18,55 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* App.css */
+
+/* Estilos generales de la aplicación */
+.app-container {
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #444;  /* Fondo oscuro */
+}
+
+/* Estilos para la barra de navegación */
+.navbar {
+  background-color: #3f51b5;
+  color: white;
+}
+
+
+/* Estilos para la barra de navegación */
+.navbar {
+  background-color: #3f51b5; /* Color de fondo */
+}
+
+.navbar a {
+  color: white; /* Color del texto */
+  margin-right: 15px; /* Espaciado a la derecha */
+  text-decoration: none; /* Quitar subrayado */
+  transition: color 0.3s; /* Efecto de transición suave */
+}
+
+.navbar a:hover {
+  color: #e0e0e0; /* Cambiar el color al pasar el ratón por encima */
+  text-decoration: underline; /* Quitar subrayado */
+
+}
+
+/* Clase para el fondo oscuro de la sección del filtro */
+.filter-section {
+  margin: 20px 0;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  
+}
+
+/* Clase para los botones activos */
+.active-button {
+  background-color: darkblue !important;
+  color: white !important;
+}
+
+.white-text {
+  color: rgb(202, 202, 202);
 }

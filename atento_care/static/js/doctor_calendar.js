@@ -293,6 +293,10 @@
 
         $('.close, .btn-secondary').on('click', function () {
             $('#appointmentModal').modal('hide');
+            
+        });
+        $('.close, .btn-secondary').on('click', function () {
+            $('#doctorModal').modal('hide');
         });
 
 

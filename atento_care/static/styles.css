@@ -1,25 +1,27 @@
-/* Cambio de fondo y color de texto para todo el cuerpo */
+/* Global Styles */
 body {
-    background-color: #333;  /* Fondo oscuro */
-    color: white;            /* Texto blanco */
+    background-color: #333;  
+    color: white;            
 }
 
-/* Cambio de fondo y color de texto para el contenido principal */
+/* Main content area */
 main {
-    background-color: #444;  /* Un tono más claro que el cuerpo para distinguir el contenido */
-    padding: 20px;           /* Espaciado alrededor del contenido */
+    background-color: #444;  
+    padding: 20px;          
 }
 
-/* Cambio del color de los enlaces para que sean visibles contra el fondo oscuro */
+/* Link styles */
 a {
     color: #3e56db;
 }
 
+/* Link hover styles */
 a:hover {
-    color: #e0e0e0;          /* Color gris claro al pasar el ratón por encima */
-    text-decoration: none;   /* Quitar el subrayado al pasar el ratón por encima */
+    color: #e0e0e0;         
+    text-decoration: none;  
 }
 
+/* Navigation styles */
 nav {
     background-color: #3f51b5;
     padding: 10px;
@@ -28,30 +30,33 @@ nav {
     align-items: center;
 }
 
+/* Navigation link styles */
 nav div a {
     color: white;
     text-decoration: none;
-    padding: 5px 10px; /* Añadir algo de relleno alrededor de los enlaces para que el cambio de color de fondo sea más evidente */
-    display: inline-block; /* Convertir en bloque en línea para que el relleno se aplique correctamente */
-    transition: background-color 0.3s, box-shadow 0.3s, color 0.3s; /* Efecto de transición suave */
+    padding: 5px 10px; 
+    display: inline-block; 
+    transition: background-color 0.3s, box-shadow 0.3s, color 0.3s; 
 }
 
+/* Navigation link hover styles */
 nav div a:hover {
-    background-color: rgba(255, 255, 255, 0); /* Añadir un color de fondo sutil al hacer hover */
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Efecto de sombra */
-    color: #e0e0e0; /* Cambiar el color del texto a un gris claro */
+    background-color: rgba(255, 255, 255, 0); 
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); 
+    color: #e0e0e0;
 }
 
+/* Icon transition effect */
 nav div a i {
-    transition: color 0.3s; /* Efecto de transición suave para el ícono */
+    transition: color 0.3s; 
 }
 
+/* Icon hover effect */
 nav div a:hover i {
-    color: #e0e0e0; /* Cambiar el color del ícono al hacer hover */
+    color: #e0e0e0; 
 }
 
-
-
+/* Class for elements without hover effect */
 .no-hover-effect {
     font-size: 1.5em;
     font-weight: 500;
@@ -59,226 +64,223 @@ nav div a:hover i {
     text-decoration: none;
 }
 
-/* Establecer el fondo y el borde de la tarjeta */
+/* Card styles */
 .card {
     margin-bottom: 20px;
-    background-color: white;  /* Fondo oscuro para la tarjeta */
-    border: 2px solid black; /* Borde negro */
-    border-radius: 8px; /* Redondear las esquinas */
-
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 8px;
 }
 
+/* Hover effect for card */
 .card-hover:hover {
     transform: scale(1.05); 
-    border: 1px solid black; /* Borde negro */
-    border-radius: 8px; /* Redondear las esquinas */
+    border: 1px solid black;
+    border-radius: 8px; 
 }
 
+/* Card body hover effect */
 .card-hover:hover .card-body {
     background-color: #3f51b5;
     color: black;
 }
 
-/* Estilos adicionales para mantener la coherencia de diseño */
+/* Card body styles */
 .card-body {
-    background-color: #333; /* Fondo oscuro */
-    color: white; /* Texto blanco */
-    border: 3px solid black; /* Borde negro alrededor del cuerpo del calendario */
+    background-color: #333;
+    color: white;
+    border: 3px solid black;
 }
 
-
-
+/* Button icon spacing */
 .btn i {
     margin-right: 5px;  
 }
 
+/* Card link styles */
 .card-link {
     text-decoration: none;
 }
 
+/* Card link hover effect */
 .card-link:hover .card {
     transform: scale(1.05);
 }
 
-/* Establecer el color del ícono antes del hover */
+/* Icon color before hover */
 #homeicon {
     color: #348ce4;
 }
 
-/* Cambiar el color de fondo del cuerpo de la tarjeta al hacer hover sobre la tarjeta completa */
+/* Card hover effects */
 .card-hover:hover .card-body {
     background-color: #3f51b5;
     color: white;
-    border-radius: 7px; /* Bordes más redondeados al hacer hover */
-    /* Cambiar el texto a blanco para que se vea sobre el fondo azul */
+    border-radius: 7px; 
 }
 
+/* Icon color on card hover */
 .card-hover:hover .card-title #homeicon {
-    color: white; /* Cambiar el color del ícono a blanco cuando se hace hover sobre la tarjeta */
+    color: white;
 }
 
-
-/* Cambiar el color de los encabezados de las tarjetas */
+/* Card header color */
 .card-header.bg-primary {
     background-color: #3f51b5 !important;
 }
 
-/* Cambiar el color del botón Edit */
+/* Edit button styles */
 #editicon.btn.btn-success {
-    background-color: #0d47a1; /* Azul oscuro */
-    border-color: #0d47a1;    /* Borde azul oscuro */
+    background-color: #0d47a1;
+    border-color: #0d47a1;    
 }
 
+/* Edit button hover styles */
 #editicon.btn.btn-success:hover {
-    background-color: #0a365c; /* Azul más oscuro al pasar el ratón por encima */
-    border-color: #0a365c;    /* Borde azul más oscuro al pasar el ratón por encima */
-    border: 0.5px solid black; /* Añade una línea divisoria entre el encabezado y el cuerpo de la tarjeta */
-
+    background-color: #0a365c;
+    border-color: #0a365c;
+    border: 0.5px solid black;
 }
 
-/* Estilo de transición suave para el cambio de color al pasar el ratón por encima del botón Edit */
+/* Transition effect for edit button */
 #editicon.btn.btn-success {
     transition: background-color 0.3s, border-color 0.3s;
 }
 
-
+/* Label styles in availability form */
 .availability-form label {
-    font-weight: 500; /* Hace que las etiquetas sean un poco más gruesas */
-    
+    font-weight: 500;
 }
 
-
-
+/* Success button styles in availability form */
 .availability-form .btn-success {
-    background-color: #3f51b5; /* Un color azul para el botón */
-    border-color: #3f51b5;    /* Borde azul */
+    background-color: #3f51b5;
+    border-color: #3f51b5;    
 }
 
+/* Success button hover styles in availability form */
 .availability-form .btn-success:hover {
-    background-color: #0f36c3; /* Azul más oscuro al pasar el ratón por encima */
-    border-color: #0f36c3;    /* Borde azul más oscuro al pasar el ratón por encima */
+    background-color: #0f36c3;
+    border-color: #0f36c3;    
 }
 
-
-
-/* Encabezado del calendario */
+/* Calendar header styles */
 .card-header.bg-primary {
-    background-color: #3f51b5 !important; /* Color azul oscuro */
-    color: white; /* Texto blanco */
+    background-color: #3f51b5 !important;
+    color: white;
     border: 3px solid black;
     border-bottom: 1.5px black;
-
 }
 
-
-/* Estilos específicos para el calendario (asumiendo que estás usando FullCalendar o una biblioteca similar) */
+/* Calendar styles */
 #calendar {
-    background-color: #444; /* Un tono ligeramente más claro para el calendario en sí */
+    background-color: #444;
 }
 
+/* Event styles in calendar */
 #calendar .fc-event {
-    background-color: black; /* Color azul para los eventos en el calendario */
-    border: none; /* Quitar el borde predeterminado de los eventos */
+    background-color: black;
+    border: none;
 }
 
+/* Day styles in calendar */
 #calendar .fc-day {
-    color: white; /* Color blanco para los números de los días */
+    color: white;
 }
 
+/* Current day styles in calendar */
 #calendar .fc-day-today {
-    background-color: rgba(16, 25, 27, 0.918); /* Un color ligeramente diferente para el día actual */
+    background-color: rgba(16, 25, 27, 0.918);
 }
 
-
+/* Card header styles */
 .card-header {
-    background-color: #3f51b5; /* Fondo azul oscuro */
-    color: white; /* Texto blanco */
+    background-color: #3f51b5;
+    color: white;
     border: 3px solid black;
     border-bottom: 0.1px solid darkslategrey;
 }
 
+/* Card title styles */
 .card-title {
-    font-size: 1.5em; /* Aumentar el tamaño de fuente del título */
-    
+    font-size: 1.5em;
 }
 
-/* Estilos para el modal */
+/* Modal content styles */
 .modal-content {
-    background-color: #444; /* Usamos el mismo fondo que el contenido principal */
-    border: 3px solid black; /* Borde negro para que se destaque */
-    color: white; /* Color de texto blanco */
+    background-color: #444;
+    border: 3px solid black;
+    color: white;
 }
 
+/* Modal header styles */
 .modal-header {
-    background-color: #3f51b5; /* Fondo azul oscuro para el encabezado del modal */
-    border-bottom: 2px solid #333; /* Línea divisoria entre el encabezado y el cuerpo del modal */
+    background-color: #3f51b5;
+    border-bottom: 2px solid #333;
 }
 
+/* Modal footer styles */
 .modal-footer {
-    background-color: #3f51b5; /* Fondo azul oscuro para el pie del modal */
-    border-top: 2px solid #333; /* Línea divisoria entre el cuerpo y el pie del modal */
+    background-color: #3f51b5;
+    border-top: 2px solid #333;
 }
 
+/* Modal title styles */
 .modal-title {
-    color: white; /* Color de texto blanco para el título */
+    color: white;
 }
 
+/* Close button styles in modal */
 .modal .close {
-    color: white; /* Color de texto blanco para el botón de cerrar */
+    color: white;
 }
 
+/* Close button hover styles in modal */
 .modal .close:hover {
-    color: #e0e0e0; /* Color gris claro al pasar el ratón por encima del botón de cerrar */
+    color: #e0e0e0;
 }
 
+/* Primary button styles in modal */
 .modal .btn-primary {
-    background-color: #3f51b5; /* Fondo azul oscuro para el botón principal */
-    border: none; /* Quitar el borde predeterminado */
+    background-color: #3f51b5;
+    border: none;
 }
 
 .modal .btn-primary:hover {
-    background-color: #0f36c3; /* Azul más oscuro al pasar el ratón por encima del botón principal */
+    background-color: #0f36c3;
 }
 
 .modal .btn-secondary {
-    background-color: #333; /* Fondo oscuro para el botón secundario */
-    border: none; /* Quitar el borde predeterminado */
+    background-color: #333;
+    border: none;
 }
 
 .modal .btn-secondary:hover {
-    background-color: #282c34; /* Un tono más claro de gris al pasar el ratón por encima del botón secundario */
+    background-color: #8c30f5;
 }
 
 .modal .form-control {
-    background-color: #333; /* Fondo oscuro para los campos del formulario */
-    color: white; /* Color de texto blanco para los campos del formulario */
-    border: 2px solid #3f51b5; /* Borde azul oscuro para los campos del formulario */
+    background-color: #333;
+    color: white;
+    border: 2px solid #3f51b5;
 }
 
 .modal .form-control:focus {
-    border-color: #0f36c3; /* Resaltar con un borde azul más oscuro cuando el campo tiene el foco */
-    box-shadow: none; /* Quitar el resplandor predeterminado alrededor del campo */
+    border-color: #0f36c3;
+    box-shadow: none;
 }
 
-/* Estilo para el botón de cierre del modal */
 .modal .close {
-    color: #3f51b5; /* Cambia el color de la "x" a un gris claro */
-    text-shadow: none; /* Quita la sombra del texto */
-    opacity: 0.8; /* Añade una ligera transparencia */
+    color: #3f51b5;
+    opacity: 0.8;
 }
 
 .modal .close:hover {
-    color: red; /* Cambia el color de la "x" a blanco al pasar el ratón por encima */
-    opacity: 1; /* Restablece la opacidad al valor completo al pasar el ratón por encima */
+    color: red;
+    opacity: 1;
 }
 
-/* Elimina el fondo predeterminado del botón de cierre */
 .modal .close:focus {
     box-shadow: none;
     outline: none;
 }
-
-
-
-
-

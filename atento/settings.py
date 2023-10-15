@@ -66,7 +66,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'doctor-appointment-manager/build')],
+        'DIRS': [os.path.join(BASE_DIR, 'atento_care/static')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,10 +131,10 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'atento_care/static',
-    os.path.join(BASE_DIR, 'doctor-appointment-manager/build/static'),
+    BASE_DIR / 'atento_care/static/react_app/static',
 ]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 
 # Default primary key field type

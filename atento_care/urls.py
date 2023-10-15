@@ -34,9 +34,6 @@ urlpatterns = [
     path('api/get_appointment/<int:event_id>/', api_get_appointment, name='api_get_appointment'),
     path('api/get_all_appointments/', get_all_appointments, name='get_all_appointments'),
     path('api/get_user_type/', api_get_user_type, name='api_get_user_type'),
-    path('appointments/', TemplateView.as_view(template_name='index.html'), name='appointments')
-
-
-
+    path('appointments/', TemplateView.as_view(template_name='react_app/index.html'), name='appointments')
     
 ]

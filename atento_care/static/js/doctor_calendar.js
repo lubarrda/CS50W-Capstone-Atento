@@ -215,7 +215,6 @@
         .then(response => response.json())
         .then(data => {
             // Handle the response
-            alert('Appointment updated successfully!');
             if (status === 'REJECTED' || status === 'CANCELLED') {
                 // Remove the event from the calendar
                 clickedEvent.remove();
